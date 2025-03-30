@@ -32,18 +32,26 @@ const colorMap: Record<string, string> = {
 };
 
 const ComparativeLineChart: React.FC<Props> = ({ data, selectedMetrics }) => {
-  const chartData = {
-    labels: data.map(row => row.timestamp),
-    datasets: selectedMetrics.map(metric => ({
-      label: metric.charAt(0).toUpperCase() + metric.slice(1),
-      data: data.map(row => row[metric as keyof SensorRow] as number),
-      borderColor: colorMap[metric],
-      backgroundColor: `${colorMap[metric]}44`,
-      tension: 0.3,
-    })),
+    if (!data || data.length === 0 || selectedMetrics.length === 0) {
+      return (
+        <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded shadow mt-6 text-center text-yellow-800 dark:text-yellow-100">
+          No data available for selected metrics.
+        </div>
+      );
+    }
+  
+    const chartData = {
+      labels: data.map(row => row.timestamp),
+      datasets: selectedMetrics.map(metric => ({
+        label: metric.charAt(0).toUpperCase() + metric.slice(1),
+        data: data.map(row => row[metric as keyof SensorRow] as number),
+        borderColor: colorMap[metric],
+        backgroundColor: `${colorMap[metric]}44`,
+        tension: 0.3,
+      })),
+    };
+  
+    return <Line data={chartData} />;
   };
-
-  return <Line data={chartData} />;
-};
 
 export default ComparativeLineChart;
