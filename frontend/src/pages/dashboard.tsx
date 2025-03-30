@@ -1,6 +1,9 @@
 import TrendForecastChart from '../components/TrendForecastChart';
+import AnomalyHeatmap from '../components/AnomalyHeatmap';
+import ComparativeLineChart from '../components/ComparativeLineChart';
 import React, { useState } from "react";
 import Papa from "papaparse";
+import { format, parseISO } from "date-fns";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -21,11 +24,24 @@ interface SensorRow {
   pressure: number;
 }
 
+interface AnomalyHeatmapData {
+  [timestampHour: string]: {
+    temperature: number;
+    vibration: number;
+    pressure: number;
+  };
+}
+
 
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<SensorRow[]>([]);
   const [anomalies, setAnomalies] = useState<SensorRow[]>([]);
+  const [nivoData, setNivoData] = useState<
+    { hour: string; Temperature: number; Vibration: number; Pressure: number }[]
+  >([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(['temperature', 'vibration']);
+
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -45,10 +61,33 @@ const Dashboard: React.FC = () => {
         setData(parsed);
         const detected = parsed.filter((r) => r.temperature > 80);
         setAnomalies(detected);
+
+        const heatmapData: AnomalyHeatmapData = {};
+
+        parsed.forEach((row) => {
+          const hour = format(parseISO(row.timestamp), "yyyy-MM-dd HH:00");
+
+          if (!heatmapData[hour]) {
+            heatmapData[hour] = { temperature: 0, vibration: 0, pressure: 0 };
+          }
+
+          if (row.temperature > 80) heatmapData[hour].temperature += 1;
+          if (row.vibration > 0.07) heatmapData[hour].vibration += 1;
+          if (row.pressure > 1015) heatmapData[hour].pressure += 1;
+        });
+
+        const transformedNivoData = Object.entries(heatmapData).map(([hour, counts]) => ({
+          hour,
+          Temperature: counts.temperature,
+          Vibration: counts.vibration,
+          Pressure: counts.pressure,
+        }));
+
+        setNivoData(transformedNivoData);
       },
     });
   };
-
+  
   const downloadAnomalies = () => {
     const csv = [
       ["timestamp", "temperature", "vibration", "pressure"],
@@ -96,9 +135,8 @@ const Dashboard: React.FC = () => {
   return (
     <div className={`${darkMode ? "dark" : ""}`}>
       <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
-        {/* Sidebar */}
         <aside className="w-64 bg-gray-900 text-white p-4 sticky top-0 h-screen hidden md:block">
-          <h1 className="text-2xl font-extrabold mb-8">PredictAsense</h1>
+          {/* <h1 className="text-m font-extrabold mb-8">PredictAsense</h1> */}
           <nav className="flex flex-col space-y-4 text-sm">
             <a href="#overview" className="hover:text-blue-400">Overview</a>
             <a href="#upload" className="hover:text-blue-400">Upload</a>
@@ -108,8 +146,7 @@ const Dashboard: React.FC = () => {
           </nav>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 md:p-10 space-y-10 overflow-y-auto scroll-smooth">
+        <main className="flex-1 p-4 sm:p-6 md:p-10 space-y-10 overflow-y-auto scroll-smooth max-w-screen-xl mx-auto">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-bold">Welcome to PredictAsense</h2>
             <button
@@ -124,10 +161,6 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               Your predictive maintenance dashboard.
             </p>
-          </section>
-          <section id="forecast" className="mb-10">
-              <h2 className="text-2xl font-semibold mb-4">📈 Forecast Trends</h2>
-              <TrendForecastChart data={data} metric="temperature" />
           </section>
 
           <section id="upload">
@@ -171,11 +204,47 @@ const Dashboard: React.FC = () => {
               </div>
             </section>
           )}
+
           {data.length > 0 && (
-             <section className="mt-10">
-               <TrendForecastChart data={data} metric="temperature" />
-               <TrendForecastChart data={data} metric="vibration" />
-               <TrendForecastChart data={data} metric="pressure" />
+            <section id="forecast" className="mb-10">
+              <h2 className="text-2xl font-semibold mb-4">📈 Forecast Trends</h2>
+              <div className="space-y-8">
+                <TrendForecastChart data={data} metric="temperature" />
+                <TrendForecastChart data={data} metric="vibration" />
+                <TrendForecastChart data={data} metric="pressure" />
+              </div>
+            </section>
+          )}
+          {data.length > 0 && (
+            <section id="compare">
+            <h3 className="text-xl font-semibold mb-4">📊 Compare Sensor Trends</h3>
+
+            <div className="mb-4">
+                 <label className="block mb-2 text-sm font-medium">Select Sensors:</label>
+                <select
+                  multiple
+                  className="w-full md:w-1/2 p-2 border border-gray-300 rounded dark:border-gray-600"
+                  value={selectedMetrics}
+                  onChange={(e) =>
+                    setSelectedMetrics(
+                Array.from(e.target.selectedOptions, (option) => option.value)
+                )
+               }
+              >
+            <option value="temperature">Temperature</option>
+            <option value="vibration">Vibration</option>
+            <option value="pressure">Pressure</option>
+              </select>
+            </div>
+
+            <ComparativeLineChart data={data} selectedMetrics={selectedMetrics} />
+            </section>
+          )}
+
+          {data.length > 0 && (
+            <section>
+            <h3 className="text-xl font-semibold mb-4">🔥 Anomaly Heatmap</h3>
+            <AnomalyHeatmap data={nivoData} />
             </section>
           )}
 
