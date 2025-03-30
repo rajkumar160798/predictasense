@@ -102,7 +102,12 @@ const ComparativeLineChart: React.FC<Props> = ({ data, selectedMetrics }) => {
     },
   };
   
-  return <Line data={chartData} options={options} />;
+  return (
+    <div className="w-full">
+      <Line data={chartData} options={options} />
+    </div>
+  );
+  
 
 };
 

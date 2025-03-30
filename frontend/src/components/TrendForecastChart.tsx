@@ -102,14 +102,11 @@ const TrendForecastChart: React.FC<TrendForecastChartProps> = ({ data, metric })
         },
       };
   
-    return (
-      <div className="bg-white dark:bg-gray-900 p-4 rounded shadow mt-6">
-        <h2 className="text-lg font-semibold mb-2">
-          📈 Trend Forecast: {metric.charAt(0).toUpperCase() + metric.slice(1)}
-        </h2>
-        <Line data={chartData} options={options} />
-      </div>
-    );
+      return (
+        <div className="w-full">
+          <Line data={chartData} options={options} />
+        </div>
+      );
   };
   ;
 

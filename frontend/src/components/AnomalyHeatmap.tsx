@@ -18,13 +18,11 @@ const AnomalyHeatmap: React.FC<HeatmapProps> = ({ data }) => {
   }));
 
   return (
-    <div style={{ height: 400, overflowX: "auto" }}>
+    <div className="w-full h-[400px]">
       <ResponsiveHeatMapCanvas
         data={transformed}
-        valueFormat=".0f"
         margin={{ top: 60, right: 90, bottom: 60, left: 100 }}
-        colors={({ value }) => (value === 1 ? "#d90429" : "#f8f9fa")} // Red for anomalies
-        enableLabels={false}
+        colors={({ value }) => (value === 1 ? "#d90429" : "#f8f9fa")}
         axisTop={null}
         axisRight={null}
         axisBottom={{
@@ -42,7 +40,8 @@ const AnomalyHeatmap: React.FC<HeatmapProps> = ({ data }) => {
         motionConfig="wobbly"
         tooltip={({ cell }) => (
           <strong>
-            {cell.serieId} at {cell.x}: {cell.value === 1 ? "Anomaly" : "Normal"}
+            {cell.serieId} at {cell.x}:{" "}
+            {cell.value === 1 ? "Anomaly" : "Normal"}
           </strong>
         )}
       />

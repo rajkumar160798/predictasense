@@ -51,8 +51,19 @@ const Dashboard: React.FC = () => {
       key: "selection",
     },
   ]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const toggleDarkMode = () => {
+    const html = document.documentElement;
+    setDarkMode(!darkMode);
   
+    if (!darkMode) {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
+  };
+  
+  const [searchTerm, setSearchTerm] = useState('');
+
   console.log("Selected date range:", range[0].startDate, range[0].endDate);
 
   const getFilteredData = (): SensorRow[] => {
@@ -173,13 +184,11 @@ const Dashboard: React.FC = () => {
           </nav>
         </aside>
 
-        <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 space-y-10 overflow-y-auto scroll-smooth max-w-full lg:max-w-screen-xl mx-auto">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 space-y-10 overflow-y-auto scroll-smooth w-full">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-bold">Welcome to PredictAsense</h2>
-            <button
-               onClick={() => setDarkMode(!darkMode)}
-              className="flex items-center px-4 py-2 rounded transition bg-gray-200 dark:bg-gray-700 text-sm shadow hover:scale-105"
-              > 
+            <button  
+              onClick={toggleDarkMode}> 
               {darkMode ? "☀️ Switch to Light" : "🌙 Switch to Dark"}
               </button>
           </div>
@@ -247,37 +256,40 @@ const Dashboard: React.FC = () => {
               </section>
 
               {filteredData.length > 0 && (
-                <section id="graphs">
-                  <h3 className="text-2xl font-semibold mb-4">Sensor Graphs</h3>
-                  <Line
-                    data={{
-                      labels: filteredData.map((row) => row.timestamp),
-                      datasets: [
-                        {
-                          label: "Temperature",
-                          data: filteredData.map((row) => row.temperature),
-                          borderColor: "orange",
-                          backgroundColor: "rgba(255,165,0,0.2)",
-                          tension: 0.3,
-                        },
-                        {
-                          label: "Vibration",
-                          data: filteredData.map((row) => row.vibration),
-                          borderColor: "green",
-                          backgroundColor: "rgba(0,128,0,0.2)",
-                          tension: 0.3,
-                        },
-                        {
-                          label: "Pressure",
-                          data: filteredData.map((row) => row.pressure),
-                          borderColor: "blue",
-                          backgroundColor: "rgba(0,0,255,0.2)",
-                          tension: 0.3,
-                        },
-                      ],
-                    }}
-                  />
-                </section>
+              <section id="graphs">
+              <h3 className="text-2xl font-semibold mb-4">Sensor Graphs</h3>
+              <div className="w-full">
+              <Line
+                  data={{
+                  labels: filteredData.map((row) => row.timestamp),
+                  datasets: [
+                   {
+                  label: "Temperature",
+                  data: filteredData.map((row) => row.temperature),
+                  borderColor: "orange",
+                  backgroundColor: "rgba(255,165,0,0.2)",
+                  tension: 0.3,
+                  },
+                  {
+                  label: "Vibration",
+                  data: filteredData.map((row) => row.vibration),
+                  borderColor: "green",
+                  backgroundColor: "rgba(0,128,0,0.2)",
+                  tension: 0.3,
+                   },
+                  {
+                  label: "Pressure",
+                  data: filteredData.map((row) => row.pressure),
+                  borderColor: "blue",
+                  backgroundColor: "rgba(0,0,255,0.2)",
+                  tension: 0.3,
+                  },
+                ],
+                }}
+                />
+              </div>
+            </section>
+
               )}
             </>
           )}
