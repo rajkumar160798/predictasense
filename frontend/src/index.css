@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
-
-
+/* Global styles (optional) */
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: #f9fafb;
+}
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
