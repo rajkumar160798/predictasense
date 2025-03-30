@@ -36,6 +36,7 @@ interface AnomalyHeatmapData {
 }
 
 const Dashboard: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState<"about" | "upload">("about");
   const [data, setData] = useState<SensorRow[]>([]);
   const [anomalies, setAnomalies] = useState<SensorRow[]>([]);
   const [nivoData, setNivoData] = useState<
@@ -162,7 +163,7 @@ const Dashboard: React.FC = () => {
     <div className={`${darkMode ? "dark" : ""}`}>
       <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
         {/* Sidebar */}
-        <aside className="w-64 bg-gray-900 text-white p-4 sticky top-0 h-screen hidden md:block">
+        <aside className="w-64 bg-gray-900 text-white p-4 sticky top-0 h-screen hidden lg:block">
           <nav className="flex flex-col space-y-4 text-sm">
             <a href="#overview" className="hover:text-blue-400">Overview</a>
             <a href="#upload" className="hover:text-blue-400">Upload</a>
@@ -172,84 +173,122 @@ const Dashboard: React.FC = () => {
           </nav>
         </aside>
 
-        <main className="flex-1 p-4 sm:p-6 md:p-10 space-y-10 overflow-y-auto scroll-smooth max-w-screen-xl mx-auto">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 space-y-10 overflow-y-auto scroll-smooth max-w-full lg:max-w-screen-xl mx-auto">
           <div className="flex justify-between items-center">
             <h2 className="text-3xl font-bold">Welcome to PredictAsense</h2>
             <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="px-3 py-1 text-sm rounded bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600"
-            >
-              {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
+               onClick={() => setDarkMode(!darkMode)}
+              className="flex items-center px-4 py-2 rounded transition bg-gray-200 dark:bg-gray-700 text-sm shadow hover:scale-105"
+              > 
+              {darkMode ? "☀️ Switch to Light" : "🌙 Switch to Dark"}
+              </button>
           </div>
 
-          <section id="overview">
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Your predictive maintenance dashboard.
-            </p>
-          </section>
-
-          <section id="date-range">
-            <h3 className="text-2xl font-semibold mb-4">📅 Filter by Date Range</h3>
-            <DateRangePicker range={range} setRange={setRange} />
-          </section>
-
-          <section id="upload">
-            <h3 className="text-2xl font-semibold mb-4">Upload Sensor Data (CSV)</h3>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              className="p-2 border border-gray-300 dark:border-gray-600 rounded w-full max-w-md"
-            />
-          </section>
-
-          {filteredData.length > 0 && (
-            <section id="graphs">
-              <h3 className="text-2xl font-semibold mb-4">Sensor Graphs</h3>
-              <Line data={chartData} />
+          {currentPage === "about" && (
+            <section id="about">
+              <h3 className="text-2xl font-semibold mb-2">About</h3>
+              <p className="text-gray-700 dark:text-gray-300 mb-6">
+                PredictAsense helps you monitor sensor data and detect anomalies using rule-based
+                logic and visual feedback. Easily upload CSV files and download reports for further
+                analysis.
+              </p>
+              <button
+                onClick={() => setCurrentPage("upload")}
+                className="bg-blue-600 text-blue-500 px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Start Uploading
+              </button>
             </section>
           )}
 
-{anomalies.length > 0 && (
-  <section id="anomalies">
-    <input
-      type="text"
-      placeholder="Search by timestamp or value..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="p-2 border border-gray-400 dark:border-gray-600 rounded mb-4 w-full max-w-md"
-    />
-    <div className="flex justify-between items-center">
-      <h3 className="text-2xl font-semibold text-red-600">
-        🚨 {anomalies.length} Anomalies Detected
-      </h3>
-      <button
-        onClick={downloadAnomalies}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Download Report
-      </button>
-    </div>
-    <div className="bg-red-100 dark:bg-red-200 text-black border border-red-400 p-4 mt-2 rounded text-sm">
-      <ul className="space-y-1">
-        {anomalies
-          .filter((a) =>
-            a.timestamp.includes(searchTerm) ||
-            a.temperature.toString().includes(searchTerm) ||
-            a.vibration.toString().includes(searchTerm) ||
-            a.pressure.toString().includes(searchTerm)
-          )
-          .map((a, i) => (
-            <li key={i}>
-              [{a.timestamp}] Temp: {a.temperature}°C | Vib: {a.vibration} | Pressure: {a.pressure}
-            </li>
-          ))}
-      </ul>
-    </div>
-  </section>
-)}
+          {currentPage === "upload" && (
+            <>
+              <section id="date-range">
+                <h3 className="text-2xl font-semibold mb-4">📅 Filter by Date Range</h3>
+                <DateRangePicker range={range} setRange={setRange} />
+              </section>
 
+              <section id="upload">
+                <h3 className="text-2xl font-semibold mb-4">Upload Sensor Data (CSV)</h3>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  className="p-2 border border-gray-300 dark:border-gray-600 rounded w-full max-w-md"
+                />
+              <button
+                onClick={() => {
+                setData([]);
+                setAnomalies([]);
+                setNivoData([]);
+                setSelectedMetrics(["temperature", "vibration"]);
+                setRange([
+               {
+               startDate: new Date(),
+               endDate: addDays(new Date(), 365),
+               key: "selection",
+               },
+               ]);
+                }}
+              className="mt-4 bg-red-500 text-blue px-4 py-2 rounded hover:bg-red-600">
+               🔄 Reset Dashboard
+                </button>
+
+                {/* <button
+                  onClick={() => {
+                  setData([]);
+                  setAnomalies([]);
+                  setNivoData([]);
+                  setSearchTerm('');
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4">
+                  Reset Dashboard
+                </button> */}
+              </section>
+
+              {filteredData.length > 0 && (
+                <section id="graphs">
+                  <h3 className="text-2xl font-semibold mb-4">Sensor Graphs</h3>
+                  <Line
+                    data={{
+                      labels: filteredData.map((row) => row.timestamp),
+                      datasets: [
+                        {
+                          label: "Temperature",
+                          data: filteredData.map((row) => row.temperature),
+                          borderColor: "orange",
+                          backgroundColor: "rgba(255,165,0,0.2)",
+                          tension: 0.3,
+                        },
+                        {
+                          label: "Vibration",
+                          data: filteredData.map((row) => row.vibration),
+                          borderColor: "green",
+                          backgroundColor: "rgba(0,128,0,0.2)",
+                          tension: 0.3,
+                        },
+                        {
+                          label: "Pressure",
+                          data: filteredData.map((row) => row.pressure),
+                          borderColor: "blue",
+                          backgroundColor: "rgba(0,0,255,0.2)",
+                          tension: 0.3,
+                        },
+                      ],
+                    }}
+                  />
+                </section>
+              )}
+            </>
+          )}
+          <div className="lg:hidden">
+            <button
+             onClick={() => alert("Mobile menu coming soon!")}
+            className="text-sm bg-gray-700 px-2 py-1 rounded text-white"
+              >
+            ☰ Menu
+            </button>
+          </div>
 
           {filteredData.length > 0 && (
             <section>

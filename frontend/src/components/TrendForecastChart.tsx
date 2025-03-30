@@ -66,35 +66,41 @@ const TrendForecastChart: React.FC<TrendForecastChartProps> = ({ data, metric })
     };
   
     const options = {
-      responsive: true,
-      plugins: {
-        legend: { position: "top" as const },
-        tooltip: {
-          mode: "index" as const,
+        responsive: true,
+        plugins: {
+          legend: { position: "top" as const },
+          tooltip: {
+            callbacks: {
+              title: (tooltipItems: any) => {
+                return `Timestamp: ${tooltipItems[0].label}`;
+              },
+              label: (tooltipItem: any) => {
+                return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}`;
+              },
+            },
+          },
+        },
+        interaction: {
+          mode: "nearest" as const,
+          axis: "x" as const,
           intersect: false,
         },
-      },
-      interaction: {
-        mode: "nearest" as const,
-        axis: "x" as const,
-        intersect: false,
-      },
-      scales: {
-        y: {
-          beginAtZero: false,
-          title: {
-            display: true,
-            text: metric.charAt(0).toUpperCase() + metric.slice(1),
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: metric.charAt(0).toUpperCase() + metric.slice(1),
+            },
+          },
+          x: {
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: 10,
+            },
           },
         },
-        x: {
-          ticks: {
-            autoSkip: true,
-            maxTicksLimit: 10,
-          },
-        },
-      },
-    };
+      };
   
     return (
       <div className="bg-white dark:bg-gray-900 p-4 rounded shadow mt-6">
