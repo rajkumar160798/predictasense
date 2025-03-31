@@ -1,9 +1,10 @@
 // src/pages/Forecast.tsx
 import React, { useState } from "react";
 import { ResponsiveLine } from "@nivo/line";
+import { ResponsiveHeatMap } from "@nivo/heatmap";
 import { format, parseISO, isAfter, isBefore } from "date-fns";
-import DateRangePicker from "../components/DateRangePicker";
 import { Range } from "react-date-range";
+import DateRangePicker from "../components/DateRangePicker";
 
 interface SensorRow {
   timestamp: string;
@@ -15,7 +16,6 @@ interface SensorRow {
 const Forecast: React.FC = () => {
   const [selectedChart, setSelectedChart] = useState("temperature");
 
-  // Range picker state
   const [range, setRange] = useState<Range[]>([
     {
       startDate: new Date("2024-03-01"),
@@ -27,11 +27,16 @@ const Forecast: React.FC = () => {
   const startDate = range[0].startDate;
   const endDate = range[0].endDate;
 
-  const rawData = JSON.parse(localStorage.getItem("sensorData") || "[]") as SensorRow[];
+  const rawData = JSON.parse(
+    localStorage.getItem("sensorData") || "[]"
+  ) as SensorRow[];
 
   const filteredData = rawData.filter((row) => {
     const date = new Date(row.timestamp);
-    return (!startDate || !isBefore(date, startDate)) && (!endDate || !isAfter(date, endDate));
+    return (
+      (!startDate || !isBefore(date, startDate)) &&
+      (!endDate || !isAfter(date, endDate))
+    );
   });
 
   const chartOptions = [
@@ -42,94 +47,77 @@ const Forecast: React.FC = () => {
     { id: "heatmap", title: "🔥 Anomaly Heatmap", desc: "Highlights when and where abnormal readings were detected across metrics." },
   ];
 
+  // Line chart data generator
   const getChartData = () => {
+    const formatData = (metric: keyof SensorRow, offset = 0) =>
+      filteredData.map((row) => ({
+        x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+        y: typeof row[metric] === "number" ? row[metric] + offset : offset,
+      }));
+
     switch (selectedChart) {
       case "temperature":
         return [
-          {
-            id: "Temperature - Actual",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.temperature,
-            })),
-          },
-          {
-            id: "Temperature - Forecast",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.temperature - 1.5,
-            })),
-          },
+          { id: "Actual", data: formatData("temperature") },
+          { id: "Forecast", data: formatData("temperature", -1.5) },
         ];
       case "vibration":
         return [
-          {
-            id: "Vibration - Actual",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.vibration,
-            })),
-          },
-          {
-            id: "Vibration - Forecast",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.vibration + 0.005,
-            })),
-          },
+          { id: "Actual", data: formatData("vibration") },
+          { id: "Forecast", data: formatData("vibration", 0.005) },
         ];
       case "pressure":
         return [
-          {
-            id: "Pressure - Actual",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.pressure,
-            })),
-          },
-          {
-            id: "Pressure - Forecast",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.pressure - 1,
-            })),
-          },
+          { id: "Actual", data: formatData("pressure") },
+          { id: "Forecast", data: formatData("pressure", -1) },
         ];
       case "comparative":
         return [
-          {
-            id: "Temperature",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.temperature,
-            })),
-          },
-          {
-            id: "Vibration",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.vibration,
-            })),
-          },
-          {
-            id: "Pressure",
-            data: filteredData.map((row) => ({
-              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
-              y: row.pressure,
-            })),
-          },
+          { id: "Temperature", data: formatData("temperature") },
+          { id: "Vibration", data: formatData("vibration") },
+          { id: "Pressure", data: formatData("pressure") },
         ];
       default:
         return [];
     }
   };
 
+  // Heatmap data generator using the "series" format
+  const getAnomalyHeatmapData = () => {
+    const hourlyBuckets: {
+      [hour: string]: { Temperature: number; Vibration: number; Pressure: number };
+    } = {};
+
+    filteredData.forEach((row) => {
+      const hourKey = format(parseISO(row.timestamp), "MMM d, HH:00");
+
+      if (!hourlyBuckets[hourKey]) {
+        hourlyBuckets[hourKey] = { Temperature: 0, Vibration: 0, Pressure: 0 };
+      }
+
+      if (row.temperature > 80) hourlyBuckets[hourKey].Temperature = 1;
+      if (row.vibration > 0.07) hourlyBuckets[hourKey].Vibration = 1;
+      if (row.pressure > 1015) hourlyBuckets[hourKey].Pressure = 1;
+    });
+
+    // Convert to series format: each row has an id and a data array
+    return Object.entries(hourlyBuckets).map(([hour, metrics]) => ({
+      id: hour,
+      data: Object.entries(metrics).map(([key, value]) => ({
+        x: key,
+        y: value,
+      })),
+    }));
+  };
+
+  const heatmapData = getAnomalyHeatmapData();
+
   const handleExport = () => {
-    alert("📦 Download feature coming soon!");
+    alert("📦 Export feature coming soon");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8 animate-fadeIn">
+    <div className="min-h-screen bg-gray-50 px-4 py-8">
       <h1 className="text-4xl font-bold text-center text-purple-800 mb-6">
         📊 Forecast Dashboard
       </h1>
@@ -153,10 +141,10 @@ const Forecast: React.FC = () => {
           <div
             key={chart.id}
             onClick={() => setSelectedChart(chart.id)}
-            className={`cursor-pointer transition-transform rounded-xl p-4 shadow-md backdrop-blur-md border ${
+            className={`cursor-pointer transition-transform rounded-xl p-4 shadow-md border ${
               selectedChart === chart.id
-                ? "bg-white/80 border-purple-600 shadow-lg scale-105"
-                : "bg-white/60 hover:shadow-lg"
+                ? "bg-white border-purple-600 shadow-lg scale-105"
+                : "bg-white hover:shadow-lg"
             }`}
           >
             <h2 className="font-semibold text-purple-800 mb-1">{chart.title}</h2>
@@ -165,9 +153,42 @@ const Forecast: React.FC = () => {
         ))}
       </div>
 
-      {/* Chart Area */}
+      {/* Chart Display */}
       <div className="w-full h-[500px] max-w-7xl mx-auto bg-white p-4 rounded-xl shadow-lg">
-        {getChartData().length > 0 ? (
+        {selectedChart === "heatmap" ? (
+          heatmapData.length > 0 ? (
+            <ResponsiveHeatMap
+              data={heatmapData}
+              margin={{ top: 60, right: 60, bottom: 60, left: 80 }}
+              axisTop={null}
+              axisRight={null}
+              axisBottom={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: -30,
+                legend: "Metric",
+                legendOffset: 36,
+                legendPosition: "middle",
+              }}
+              axisLeft={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: "Time",
+                legendPosition: "middle",
+                legendOffset: -72,
+              }}
+              // Removed invalid property 'cellOpacity'
+              borderColor={{ from: "color", modifiers: [["darker", 0.4]] }}
+              labelTextColor={{ from: "color", modifiers: [["darker", 2]] }}
+              colors={{ type: "sequential", scheme: "reds" }}
+              animate={true}
+              motionConfig="gentle"
+            />
+          ) : (
+            <p className="text-center text-gray-600">No anomaly data found.</p>
+          )
+        ) : (
           <ResponsiveLine
             data={getChartData()}
             margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
@@ -205,8 +226,6 @@ const Forecast: React.FC = () => {
               },
             ]}
           />
-        ) : (
-          <p className="text-center text-gray-600">No data in selected date range.</p>
         )}
       </div>
     </div>
