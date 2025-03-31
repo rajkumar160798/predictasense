@@ -1,21 +1,33 @@
 // src/components/Sidebar.tsx
 import React from "react";
-import { NavLink } from "react-router-dom";
-import { Moon } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar: React.FC = () => {
+  const { pathname } = useLocation();
+
+  const menuItems = [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Anomalies", path: "/anomalies" },
+    { label: "Reports", path: "/reports" },
+    { label: "Settings", path: "/settings" },
+  ];
+
   return (
-    <aside className="w-64 bg-purple-600 text-white p-6 h-screen">
-      <h2 className="text-2xl font-bold mb-8">PredictAsense</h2>
-      <nav className="flex flex-col space-y-4 text-lg">
-        <NavLink to="/dashboard" className={({ isActive }) => isActive ? "font-bold" : ""}>Dashboard</NavLink>
-        <NavLink to="/anomalies" className={({ isActive }) => isActive ? "font-bold" : ""}>Anomalies</NavLink>
-        <NavLink to="/reports" className={({ isActive }) => isActive ? "font-bold" : ""}>Reports</NavLink>
-        <NavLink to="/settings" className={({ isActive }) => isActive ? "font-bold" : ""}>Settings</NavLink>
+    <aside className="w-64 bg-[#7E65E2] text-white p-6 h-screen">
+      <h1 className="text-2xl font-bold mb-10">PredictAsense</h1>
+      <nav className="space-y-4 text-lg">
+        {menuItems.map((item) => (
+          <Link
+            key={item.label}
+            to={item.path}
+            className={`block ${
+              pathname === item.path ? "font-bold" : ""
+            } hover:text-black`}
+          >
+            {item.label}
+          </Link>
+        ))}
       </nav>
-      <div className="absolute top-6 right-6">
-        <Moon className="cursor-pointer" />
-      </div>
     </aside>
   );
 };
