@@ -5,6 +5,7 @@ import { ResponsiveHeatMap } from "@nivo/heatmap";
 import { format, parseISO, isAfter, isBefore } from "date-fns";
 import { Range } from "react-date-range";
 import DateRangePicker from "../components/DateRangePicker";
+import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
 
 interface SensorRow {
   timestamp: string;
@@ -112,9 +113,7 @@ const Forecast: React.FC = () => {
 
   const heatmapData = getAnomalyHeatmapData();
 
-  const handleExport = () => {
-    alert("📦 Export feature coming soon");
-  };
+
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
@@ -127,12 +126,7 @@ const Forecast: React.FC = () => {
         <div className="w-full max-w-md">
           <DateRangePicker range={range} setRange={setRange} />
         </div>
-        <button
-          onClick={handleExport}
-          className="bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700"
-        >
-          ⬇️ Download Chart
-        </button>
+        <ForecastPDFGenerator />
       </div>
 
       {/* Chart Selector */}
