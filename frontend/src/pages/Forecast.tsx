@@ -222,6 +222,75 @@ const Forecast: React.FC = () => {
           />
         )}
       </div>
+
+      {/* Hidden charts for PDF export */}
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", opacity: 0, pointerEvents: "none" }}>
+        <div id="chart-temperature" style={{ width: 800, height: 500 }}>
+          <ResponsiveLine
+            data={[
+              { id: "Actual", data: filteredData.map((row) => ({ x: row.timestamp, y: row.temperature })) },
+              { id: "Forecast", data: filteredData.map((row) => ({ x: row.timestamp, y: row.temperature - 1.5 })) },
+            ]}
+            xScale={{ type: "point" }}
+            yScale={{ type: "linear" }}
+            axisBottom={null}
+            axisLeft={null}
+          />
+        </div>
+
+        <div id="chart-vibration" style={{ width: 800, height: 500 }}>
+          <ResponsiveLine
+            data={[
+              { id: "Actual", data: filteredData.map((row) => ({ x: row.timestamp, y: row.vibration })) },
+              { id: "Forecast", data: filteredData.map((row) => ({ x: row.timestamp, y: row.vibration + 0.005 })) },
+            ]}
+            xScale={{ type: "point" }}
+            yScale={{ type: "linear" }}
+            axisBottom={null}
+            axisLeft={null}
+          />
+        </div>
+
+        <div id="chart-pressure" style={{ width: 800, height: 500 }}>
+          <ResponsiveLine
+            data={[
+              { id: "Actual", data: filteredData.map((row) => ({ x: row.timestamp, y: row.pressure })) },
+              { id: "Forecast", data: filteredData.map((row) => ({ x: row.timestamp, y: row.pressure - 1 })) },
+            ]}
+            xScale={{ type: "point" }}
+            yScale={{ type: "linear" }}
+            axisBottom={null}
+            axisLeft={null}
+          />
+        </div>
+
+        <div id="chart-comparative" style={{ width: 800, height: 500 }}>
+          <ResponsiveLine
+            data={[
+              { id: "Temperature", data: filteredData.map((row) => ({ x: row.timestamp, y: row.temperature })) },
+              { id: "Vibration", data: filteredData.map((row) => ({ x: row.timestamp, y: row.vibration })) },
+              { id: "Pressure", data: filteredData.map((row) => ({ x: row.timestamp, y: row.pressure })) },
+            ]}
+            xScale={{ type: "point" }}
+            yScale={{ type: "linear" }}
+            axisBottom={null}
+            axisLeft={null}
+          />
+        </div>
+
+        <div id="chart-heatmap" style={{ width: 800, height: 500 }}>
+          <ResponsiveHeatMap
+            data={heatmapData}
+            margin={{ top: 60, right: 60, bottom: 60, left: 80 }}
+            axisTop={null}
+            axisRight={null}
+            axisBottom={null}
+            axisLeft={null}
+            colors={{ type: "sequential", scheme: "reds" }}
+            animate={false}
+          />
+        </div>
+      </div>
     </div>
   );
 };
