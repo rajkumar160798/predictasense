@@ -41,7 +41,6 @@ const Upload: React.FC = () => {
         setData(parsed);
         localStorage.setItem("sensorData", JSON.stringify(parsed));
 
-        // Generate nivoData (heatmap) for anomalies
         const heatmapData: AnomalyHeatmapData = {};
         parsed.forEach((row) => {
           const hour = format(parseISO(row.timestamp), "MM-dd HH:00");
@@ -60,7 +59,6 @@ const Upload: React.FC = () => {
           Pressure: counts.pressure,
         }));
 
-        // ✅ Save anomaly heatmap data to localStorage
         localStorage.setItem("nivoData", JSON.stringify(transformed));
       },
     });
@@ -68,12 +66,25 @@ const Upload: React.FC = () => {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Upload Sensor Data</h1>
+      <h1 className="text-3xl font-bold text-purple-800 mb-4">Upload Sensor Data</h1>
+
+      <div className="bg-purple-50 border border-purple-300 rounded-lg p-4 mb-4 shadow">
+        <p className="text-gray-700 mb-2">
+          📄 Upload a <strong>.csv</strong> file with the following headers:
+        </p>
+        <ul className="list-disc pl-6 text-gray-600">
+          <li><strong>timestamp</strong> (e.g., 2024-01-01T00:00:00Z)</li>
+          <li><strong>temperature</strong> (in °C)</li>
+          <li><strong>vibration</strong> (in g-force)</li>
+          <li><strong>pressure</strong> (in hPa)</li>
+        </ul>
+      </div>
+
       <input
         type="file"
         accept=".csv"
         onChange={handleFileUpload}
-        className="p-2 border border-gray-300 dark:border-gray-600 rounded w-full max-w-md"
+        className="p-2 border border-purple-300 rounded w-full max-w-md"
       />
 
       {data.length > 0 && (
@@ -81,7 +92,7 @@ const Upload: React.FC = () => {
           <p className="text-green-600 mb-4">✅ File uploaded successfully.</p>
           <button
             onClick={() => navigate("/forecast")}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-800 transition"
           >
             Continue to Forecast →
           </button>

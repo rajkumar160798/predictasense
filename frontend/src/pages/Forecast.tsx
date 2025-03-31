@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Range } from "react-date-range";
-import { parseISO, isWithinInterval, addDays } from "date-fns";
+// src/pages/Forecast.tsx
+import React, { useState } from "react";
+import { ResponsiveLine } from "@nivo/line";
+import { format, parseISO, isAfter, isBefore } from "date-fns";
 import DateRangePicker from "../components/DateRangePicker";
-import TrendForecastChart from "../components/TrendForecastChart";
-import ComparativeLineChart from "../components/ComparativeLineChart";
-import AnomalyHeatmap from "../components/AnomalyHeatmap";
+import { Range } from "react-date-range";
 
 interface SensorRow {
   timestamp: string;
@@ -13,119 +12,203 @@ interface SensorRow {
   pressure: number;
 }
 
-interface NivoRow {
-  hour: string;
-  Temperature: number;
-  Vibration: number;
-  Pressure: number;
-}
-
 const Forecast: React.FC = () => {
-  const [rawData, setRawData] = useState<SensorRow[]>([]);
-  const [filteredData, setFilteredData] = useState<SensorRow[]>([]);
-  const [nivoData, setNivoData] = useState<NivoRow[]>([]);
+  const [selectedChart, setSelectedChart] = useState("temperature");
+
+  // Range picker state
   const [range, setRange] = useState<Range[]>([
     {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
+      startDate: new Date("2024-03-01"),
+      endDate: new Date("2024-03-10"),
       key: "selection",
     },
   ]);
-  const [selectedChart, setSelectedChart] = useState<string>("");
 
-  // Load data from localStorage on mount
-  useEffect(() => {
-    const sensor = localStorage.getItem("sensorData");
-    const nivo = localStorage.getItem("nivoData");
+  const startDate = range[0].startDate;
+  const endDate = range[0].endDate;
 
-    if (sensor) {
-      setRawData(JSON.parse(sensor));
-    }
+  const rawData = JSON.parse(localStorage.getItem("sensorData") || "[]") as SensorRow[];
 
-    if (nivo) {
-      setNivoData(JSON.parse(nivo));
-    }
-  }, []);
-
-  // Filter sensor data by selected date range
-  useEffect(() => {
-    const start = range[0].startDate;
-    const end = range[0].endDate;
-    if (!start || !end) return;
-
-    const filtered = rawData.filter((row) => {
-      const ts = parseISO(row.timestamp);
-      return isWithinInterval(ts, { start, end });
-    });
-
-    setFilteredData(filtered);
-  }, [range, rawData]);
+  const filteredData = rawData.filter((row) => {
+    const date = new Date(row.timestamp);
+    return (!startDate || !isBefore(date, startDate)) && (!endDate || !isAfter(date, endDate));
+  });
 
   const chartOptions = [
-    { label: "📈 Trend Forecast - Temperature", value: "temperature" },
-    { label: "🎚️ Trend Forecast - Vibration", value: "vibration" },
-    { label: "📉 Trend Forecast - Pressure", value: "pressure" },
-    { label: "🔥 Anomaly Heatmap", value: "heatmap" },
-    { label: "📊 Comparative Trends", value: "compare" },
+    { id: "temperature", title: "📈 Trend Forecast - Temperature", desc: "Shows predicted temperature changes. Spikes or drops may indicate overheating or cooling issues." },
+    { id: "vibration", title: "📊 Trend Forecast - Vibration", desc: "Tracks vibration patterns over time. Abnormal spikes may signal imbalance or wear." },
+    { id: "pressure", title: "🧪 Trend Forecast - Pressure", desc: "Monitors pressure trends. Sudden changes might indicate blockages or leaks." },
+    { id: "comparative", title: "📊 Comparative Trends", desc: "Visual comparison of all three metrics to analyze cross-impact over time." },
+    { id: "heatmap", title: "🔥 Anomaly Heatmap", desc: "Highlights when and where abnormal readings were detected across metrics." },
   ];
 
+  const getChartData = () => {
+    switch (selectedChart) {
+      case "temperature":
+        return [
+          {
+            id: "Temperature - Actual",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.temperature,
+            })),
+          },
+          {
+            id: "Temperature - Forecast",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.temperature - 1.5,
+            })),
+          },
+        ];
+      case "vibration":
+        return [
+          {
+            id: "Vibration - Actual",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.vibration,
+            })),
+          },
+          {
+            id: "Vibration - Forecast",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.vibration + 0.005,
+            })),
+          },
+        ];
+      case "pressure":
+        return [
+          {
+            id: "Pressure - Actual",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.pressure,
+            })),
+          },
+          {
+            id: "Pressure - Forecast",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.pressure - 1,
+            })),
+          },
+        ];
+      case "comparative":
+        return [
+          {
+            id: "Temperature",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.temperature,
+            })),
+          },
+          {
+            id: "Vibration",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.vibration,
+            })),
+          },
+          {
+            id: "Pressure",
+            data: filteredData.map((row) => ({
+              x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+              y: row.pressure,
+            })),
+          },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const handleExport = () => {
+    alert("📦 Download feature coming soon!");
+  };
+
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-10">
-      <h1 className="text-3xl font-bold mb-4">📊 Forecast Dashboard</h1>
+    <div className="min-h-screen bg-gray-50 px-4 py-8 animate-fadeIn">
+      <h1 className="text-4xl font-bold text-center text-purple-800 mb-6">
+        📊 Forecast Dashboard
+      </h1>
 
-      <div className="bg-gray-900 p-6 rounded-lg shadow-md text-white">
-        <h2 className="text-xl font-semibold mb-2">📅 Select Date Range</h2>
-        <DateRangePicker range={range} setRange={setRange} />
+      {/* Date Picker + Export */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+        <div className="w-full max-w-md">
+          <DateRangePicker range={range} setRange={setRange} />
+        </div>
+        <button
+          onClick={handleExport}
+          className="bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700"
+        >
+          ⬇️ Download Chart
+        </button>
       </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">📊 Choose a Chart</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {chartOptions.map((opt) => (
-            <button
-              key={opt.value}
-              className={`p-4 rounded shadow text-left border hover:bg-blue-100 dark:hover:bg-blue-800 transition ${
-                selectedChart === opt.value
-                  ? "bg-blue-500 text-white"
-                  : "bg-white dark:bg-gray-800 text-black dark:text-white"
-              }`}
-              onClick={() => setSelectedChart(opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+      {/* Chart Selector */}
+      <div className="grid md:grid-cols-3 gap-4 mb-8">
+        {chartOptions.map((chart) => (
+          <div
+            key={chart.id}
+            onClick={() => setSelectedChart(chart.id)}
+            className={`cursor-pointer transition-transform rounded-xl p-4 shadow-md backdrop-blur-md border ${
+              selectedChart === chart.id
+                ? "bg-white/80 border-purple-600 shadow-lg scale-105"
+                : "bg-white/60 hover:shadow-lg"
+            }`}
+          >
+            <h2 className="font-semibold text-purple-800 mb-1">{chart.title}</h2>
+            <p className="text-gray-700 text-sm">{chart.desc}</p>
+          </div>
+        ))}
       </div>
 
-      {filteredData.length === 0 && (
-        <div className="text-yellow-500 bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-300 p-2 rounded">
-          ⚠️ No data found in selected date range.
-        </div>
-      )}
-
-      {selectedChart === "temperature" && (
-        <TrendForecastChart data={filteredData} metric="temperature" />
-      )}
-      {selectedChart === "vibration" && (
-        <TrendForecastChart data={filteredData} metric="vibration" />
-      )}
-      {selectedChart === "pressure" && (
-        <TrendForecastChart data={filteredData} metric="pressure" />
-      )}
-      {selectedChart === "compare" && (
-        <ComparativeLineChart
-          data={filteredData}
-          selectedMetrics={["temperature", "vibration", "pressure"]}
-        />
-      )}
-      {selectedChart === "heatmap" && nivoData.length > 0 && (
-        <AnomalyHeatmap
-          data={nivoData.map(({ hour, ...metrics }) => ({
-            hour,
-            ...metrics,
-          }))}
-        />
-      )}
+      {/* Chart Area */}
+      <div className="w-full h-[500px] max-w-7xl mx-auto bg-white p-4 rounded-xl shadow-lg">
+        {getChartData().length > 0 ? (
+          <ResponsiveLine
+            data={getChartData()}
+            margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
+            xScale={{ type: "point" }}
+            yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
+            axisBottom={{
+              tickRotation: -35,
+              legend: "Time",
+              legendOffset: 40,
+              legendPosition: "middle",
+            }}
+            axisLeft={{
+              legend:
+                selectedChart === "vibration"
+                  ? "Vibration (g)"
+                  : selectedChart === "pressure"
+                  ? "Pressure (hPa)"
+                  : "Value",
+              legendOffset: -40,
+              legendPosition: "middle",
+            }}
+            colors={{ scheme: "category10" }}
+            pointSize={8}
+            pointBorderWidth={2}
+            useMesh={true}
+            legends={[
+              {
+                anchor: "top-left",
+                direction: "row",
+                translateY: -40,
+                itemWidth: 150,
+                itemHeight: 20,
+                symbolSize: 12,
+                symbolShape: "circle",
+              },
+            ]}
+          />
+        ) : (
+          <p className="text-center text-gray-600">No data in selected date range.</p>
+        )}
+      </div>
     </div>
   );
 };

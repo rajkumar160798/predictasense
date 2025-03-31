@@ -13,15 +13,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Landing page without layout */}
+        {/* 🔹 Standalone pages without layout */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/forecast" element={<Forecast />} />
+        <Route path="/anomalies" element={<Anomalies />} />
+        <Route path="/reports" element={<Reports />} />
+
+        {/* 🔸 Pages with sidebar layout */}
         <Route element={<MainLayout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/forecast" element={<Forecast />} />
-          <Route path="/upload" element={<Upload />} />
-          <Route path="/anomalies" element={<Anomalies />} />
-          <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
