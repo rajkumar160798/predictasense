@@ -278,7 +278,7 @@ const Forecast: React.FC = () => {
           />
         </div>
 
-        <div id="chart-heatmap" style={{ width: 800, height: 500 }}>
+        <div id="chart-heatmap" style={{ width: 1000, height: 400 }}>
           <ResponsiveHeatMap
             data={heatmapData}
             margin={{ top: 60, right: 60, bottom: 60, left: 80 }}
