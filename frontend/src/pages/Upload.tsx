@@ -97,7 +97,7 @@ const Upload: React.FC = () => {
           type="file"
           accept=".csv"
           onChange={handleFileUpload}
-          className="p-2 border border-purple-300 rounded w-full max-w-md"
+          className="p-2 border border-purple-800 rounded w-full max-w-md"
         />
 
         {data.length > 0 && (
@@ -105,7 +105,7 @@ const Upload: React.FC = () => {
             <p className="text-green-600 mb-4">✅ File uploaded successfully.</p>
             <button
               onClick={() => navigate("/forecast")}
-              className="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-800 transition"
+              className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-10 py-4 rounded-full text-xl shadow-md hover:scale-105 transition-transform"
             >
               Continue to Forecast →
             </button>

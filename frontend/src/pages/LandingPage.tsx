@@ -26,6 +26,9 @@ const LandingPage: React.FC = () => {
         <p className="text-2xl text-white max-w-2xl">
           Smart AI-powered predictive maintenance tool that forecasts trends and detects anomalies from your sensor data.
         </p>
+        <h2 className="text-2xl text-white max-w-4xl">
+          Designed by Raj Kumar Myakala
+        </h2>
         <button
           onClick={() => navigate("/upload")}
           className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-10 py-4 rounded-full text-xl shadow-md hover:scale-105 transition-transform"
