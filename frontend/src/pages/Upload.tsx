@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Papa from "papaparse";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
+import backgroundImage from "../assets/machine-background.jpg"; // Add the same background image
 
 interface SensorRow {
   timestamp: string;
@@ -65,39 +66,60 @@ const Upload: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-purple-800 mb-4">Upload Sensor Data</h1>
+    <div
+      className="relative h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
 
-      <div className="bg-purple-50 border border-purple-300 rounded-lg p-4 mb-4 shadow">
-        <p className="text-gray-700 mb-2">
-          📄 Upload a <strong>.csv</strong> file with the following headers:
-        </p>
-        <ul className="list-disc pl-6 text-gray-600">
-          <li><strong>timestamp</strong> (e.g., 2024-01-01T00:00:00Z)</li>
-          <li><strong>temperature</strong> (in °C)</li>
-          <li><strong>vibration</strong> (in g-force)</li>
-          <li><strong>pressure</strong> (in hPa)</li>
-        </ul>
+      {/* Content */}
+      <div className="z-10 p-6 max-w-3xl mx-auto">
+        <h1 className="text-5xl font-bold text-white mb-6">Upload Sensor Data</h1>
+
+        <div className="bg-purple-50 border border-purple-300 rounded-lg p-4 mb-10 shadow">
+          <p className="text-gray-700 mb-2">
+            📄 Upload a <strong>.csv</strong> file with the following headers:
+          </p>
+          <ul className="list-disc pl-6 text-gray-600">
+            <li><strong>timestamp</strong> (e.g., 2024-01-01T00:00:00Z)</li>
+            <li><strong>temperature</strong> (in °C)</li>
+            <li><strong>vibration</strong> (in g-force)</li>
+            <li><strong>pressure</strong> (in hPa)</li>
+          </ul>
+        </div>
+
+        <input
+          type="file"
+          accept=".csv"
+          onChange={handleFileUpload}
+          className="p-2 border border-purple-300 rounded w-full max-w-md"
+        />
+
+        {data.length > 0 && (
+          <div className="mt-6">
+            <p className="text-green-600 mb-4">✅ File uploaded successfully.</p>
+            <button
+              onClick={() => navigate("/forecast")}
+              className="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-800 transition"
+            >
+              Continue to Forecast →
+            </button>
+          </div>
+        )}
       </div>
 
-      <input
-        type="file"
-        accept=".csv"
-        onChange={handleFileUpload}
-        className="p-2 border border-purple-300 rounded w-full max-w-md"
+      {/* Background Image Layer */}
+      <img
+        src={backgroundImage}
+        alt="bg"
+        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
+        style={{ filter: "brightness(0.4)" }}
       />
-
-      {data.length > 0 && (
-        <div className="mt-6">
-          <p className="text-green-600 mb-4">✅ File uploaded successfully.</p>
-          <button
-            onClick={() => navigate("/forecast")}
-            className="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-800 transition"
-          >
-            Continue to Forecast →
-          </button>
-        </div>
-      )}
     </div>
   );
 };

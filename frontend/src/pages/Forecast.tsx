@@ -6,6 +6,7 @@ import { format, parseISO, isAfter, isBefore } from "date-fns";
 import { Range } from "react-date-range";
 import DateRangePicker from "../components/DateRangePicker";
 import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
+import backgroundImage from "../assets/machine-background.jpg"; // Add the same background image
 
 interface SensorRow {
   timestamp: string;
@@ -113,114 +114,125 @@ const Forecast: React.FC = () => {
 
   const heatmapData = getAnomalyHeatmapData();
 
-
-
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <h1 className="text-4xl font-bold text-center text-purple-800 mb-6">
-        📊 Forecast Dashboard
-      </h1>
+    <div
+      className="relative h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
 
-      {/* Date Picker + Export */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-        <div className="w-full max-w-md">
-          <DateRangePicker range={range} setRange={setRange} />
-        </div>
-        <ForecastPDFGenerator />
-      </div>
+      {/* Content */}
+      <div className="z-10 w-full px-4 py-8">
+        <h1 className="text-4xl font-bold text-center text-white mb-6">
+          📊 Forecast Dashboard
+        </h1>
 
-      {/* Chart Selector */}
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        {chartOptions.map((chart) => (
-          <div
-            key={chart.id}
-            onClick={() => setSelectedChart(chart.id)}
-            className={`cursor-pointer transition-transform rounded-xl p-4 shadow-md border ${
-              selectedChart === chart.id
-                ? "bg-white border-purple-600 shadow-lg scale-105"
-                : "bg-white hover:shadow-lg"
-            }`}
-          >
-            <h2 className="font-semibold text-purple-800 mb-1">{chart.title}</h2>
-            <p className="text-gray-700 text-sm">{chart.desc}</p>
+        {/* Date Picker + Export */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+          <div className="w-full max-w-md">
+            <DateRangePicker range={range} setRange={setRange} />
           </div>
-        ))}
-      </div>
+          <ForecastPDFGenerator />
+        </div>
 
-      {/* Chart Display */}
-      <div className="w-full h-[500px] max-w-7xl mx-auto bg-white p-4 rounded-xl shadow-lg">
-        {selectedChart === "heatmap" ? (
-          heatmapData.length > 0 ? (
-            <ResponsiveHeatMap
-              data={heatmapData}
-              margin={{ top: 60, right: 60, bottom: 60, left: 80 }}
-              axisTop={null}
-              axisRight={null}
+        {/* Chart Selector */}
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
+          {chartOptions.map((chart) => (
+            <div
+              key={chart.id}
+              onClick={() => setSelectedChart(chart.id)}
+              className={`cursor-pointer transition-transform rounded-xl p-4 shadow-md border ${
+                selectedChart === chart.id
+                  ? "bg-white border-purple-600 shadow-lg scale-105"
+                  : "bg-white hover:shadow-lg"
+              }`}
+            >
+              <h2 className="font-semibold text-purple-800 mb-1">{chart.title}</h2>
+              <p className="text-gray-700 text-sm">{chart.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Chart Display */}
+        <div className="w-full h-[500px] max-w-7xl mx-auto bg-white p-4 rounded-xl shadow-lg">
+          {selectedChart === "heatmap" ? (
+            heatmapData.length > 0 ? (
+              <ResponsiveHeatMap
+                data={heatmapData}
+                margin={{ top: 60, right: 60, bottom: 60, left: 80 }}
+                axisTop={null}
+                axisRight={null}
+                axisBottom={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: -30,
+                  legend: "Metric",
+                  legendOffset: 36,
+                  legendPosition: "middle",
+                }}
+                axisLeft={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: 0,
+                  legend: "Time",
+                  legendPosition: "middle",
+                  legendOffset: -72,
+                }}
+                // Removed invalid property 'cellOpacity'
+                borderColor={{ from: "color", modifiers: [["darker", 0.4]] }}
+                labelTextColor={{ from: "color", modifiers: [["darker", 2]] }}
+                colors={{ type: "sequential", scheme: "reds" }}
+                animate={true}
+                motionConfig="gentle"
+              />
+            ) : (
+              <p className="text-center text-gray-600">No anomaly data found.</p>
+            )
+          ) : (
+            <ResponsiveLine
+              data={getChartData()}
+              margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
+              xScale={{ type: "point" }}
+              yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
               axisBottom={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: -30,
-                legend: "Metric",
-                legendOffset: 36,
+                tickRotation: -35,
+                legend: "Time",
+                legendOffset: 40,
                 legendPosition: "middle",
               }}
               axisLeft={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0,
-                legend: "Time",
+                legend:
+                  selectedChart === "vibration"
+                    ? "Vibration (g)"
+                    : selectedChart === "pressure"
+                    ? "Pressure (hPa)"
+                    : "Value",
+                legendOffset: -40,
                 legendPosition: "middle",
-                legendOffset: -72,
               }}
-              // Removed invalid property 'cellOpacity'
-              borderColor={{ from: "color", modifiers: [["darker", 0.4]] }}
-              labelTextColor={{ from: "color", modifiers: [["darker", 2]] }}
-              colors={{ type: "sequential", scheme: "reds" }}
-              animate={true}
-              motionConfig="gentle"
+              colors={{ scheme: "category10" }}
+              pointSize={8}
+              pointBorderWidth={2}
+              useMesh={true}
+              legends={[
+                {
+                  anchor: "top-left",
+                  direction: "row",
+                  translateY: -40,
+                  itemWidth: 150,
+                  itemHeight: 20,
+                  symbolSize: 12,
+                  symbolShape: "circle",
+                },
+              ]}
             />
-          ) : (
-            <p className="text-center text-gray-600">No anomaly data found.</p>
-          )
-        ) : (
-          <ResponsiveLine
-            data={getChartData()}
-            margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
-            xScale={{ type: "point" }}
-            yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
-            axisBottom={{
-              tickRotation: -35,
-              legend: "Time",
-              legendOffset: 40,
-              legendPosition: "middle",
-            }}
-            axisLeft={{
-              legend:
-                selectedChart === "vibration"
-                  ? "Vibration (g)"
-                  : selectedChart === "pressure"
-                  ? "Pressure (hPa)"
-                  : "Value",
-              legendOffset: -40,
-              legendPosition: "middle",
-            }}
-            colors={{ scheme: "category10" }}
-            pointSize={8}
-            pointBorderWidth={2}
-            useMesh={true}
-            legends={[
-              {
-                anchor: "top-left",
-                direction: "row",
-                translateY: -40,
-                itemWidth: 150,
-                itemHeight: 20,
-                symbolSize: 12,
-                symbolShape: "circle",
-              },
-            ]}
-          />
-        )}
+          )}
+        </div>
       </div>
 
       {/* Hidden charts for PDF export */}
@@ -291,6 +303,14 @@ const Forecast: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* Background Image Layer */}
+      <img
+        src={backgroundImage}
+        alt="bg"
+        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
+        style={{ filter: "brightness(0.4)" }}
+      />
     </div>
   );
 };
