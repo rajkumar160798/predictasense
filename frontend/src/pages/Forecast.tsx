@@ -8,6 +8,8 @@ import DateRangePicker from "../components/DateRangePicker";
 import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
 import AnomalyInsightsSection from "../components/AnomalyInsightsSection";
 import backgroundImage from "../assets/machine-background.jpg";
+import { computeAnomalyImpact } from "../utils/impactForecast";
+import AnomalyImpactForecast from "../components/AnomalyImpactForecast";
 
 interface SensorRow {
   timestamp: string;
@@ -87,6 +89,7 @@ const Forecast: React.FC = () => {
     { id: "comparative", title: "📊 Comparative Trends", desc: "Visual comparison of all three metrics to analyze cross-impact over time." },
     { id: "heatmap", title: "🔥 Anomaly Heatmap", desc: "Highlights when and where abnormal readings were detected across metrics." },
     { id: "anomalyInsights", title: "🔍 Anomaly Insights", desc: "Detailed insights into detected anomalies, including severity and potential causes." },
+    { id: "anomalyImpact", title: "🧠 Anomaly Impact Forecast", desc: "Predicts the impact & risk of detected anomalies to prioritize maintenance." }, 
   ];
 
   // Line chart data generator
@@ -153,6 +156,8 @@ const Forecast: React.FC = () => {
   };
 
   const heatmapData = getAnomalyHeatmapData();
+  const impacts = computeAnomalyImpact(filteredData);
+  
 
   return (
     <div
@@ -201,7 +206,14 @@ const Forecast: React.FC = () => {
         </div>
 
         {/* Chart Display or Anomaly Insights */}
-        {selectedChart !== "anomalyInsights" ? (
+        {selectedChart === "anomalyImpact" ? (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              📊 Anomaly Impact Forecast
+            </h2>
+            <AnomalyImpactForecast impacts={impacts} />
+          </div>
+        ) : selectedChart !== "anomalyInsights" ? (
           <div className="w-full h-[500px] bg-white p-4 rounded-xl shadow-lg">
             {selectedChart === "heatmap" ? (
               heatmapData.length > 0 ? (
