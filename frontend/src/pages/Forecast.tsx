@@ -10,7 +10,10 @@ import AnomalyInsightsSection from "../components/AnomalyInsightsSection";
 import backgroundImage from "../assets/machine-background.jpg";
 import { computeAnomalyImpact } from "../utils/impactForecast";
 import AnomalyImpactForecast from "../components/AnomalyImpactForecast";
-
+import { getSuggestedActions } from "../utils/suggestedActions";
+import SuggestedActions from "../components/SuggestedActions";
+import { AnomalyInsight } from "../utils/types";
+import { useMemo } from "react";
 interface SensorRow {
   timestamp: string;
   temperature: number;
@@ -45,30 +48,30 @@ const Forecast: React.FC = () => {
     );
   });
 
-  const generateAnomalyInsights = () => {
-    const insights = [];
-
-    for (const row of filteredData) {
+  const generateAnomalyInsights = (data: SensorRow[]): AnomalyInsight[] => {
+    const insights: AnomalyInsight[] = [];
+  
+    for (const row of data) {
       const time = format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm");
-
+  
       if (row.temperature > 80) {
         insights.push({
           time,
           metric: "Temperature",
-          severity: "High" as const,
+          severity: "High",
           description: "Overheating detected. Consider cooling inspection.",
         });
       }
-
+  
       if (row.vibration > 0.07) {
         insights.push({
           time,
           metric: "Vibration",
-          severity: "Medium" as const,
+          severity: "Medium",
           description: "Unusual vibration. Possible imbalance or component wear.",
         });
       }
-
+  
       if (row.pressure > 1015) {
         insights.push({
           time,
@@ -90,6 +93,7 @@ const Forecast: React.FC = () => {
     { id: "heatmap", title: "🔥 Anomaly Heatmap", desc: "Highlights when and where abnormal readings were detected across metrics." },
     { id: "anomalyInsights", title: "🔍 Anomaly Insights", desc: "Detailed insights into detected anomalies, including severity and potential causes." },
     { id: "anomalyImpact", title: "🧠 Anomaly Impact Forecast", desc: "Predicts the impact & risk of detected anomalies to prioritize maintenance." }, 
+    { id: "suggestedActions", title: "🛠️ Suggested Actions", desc: "Recommendations based on detected anomalies." },
   ];
 
   // Line chart data generator
@@ -158,6 +162,18 @@ const Forecast: React.FC = () => {
   const heatmapData = getAnomalyHeatmapData();
   const impacts = computeAnomalyImpact(filteredData);
   
+  const memoizedInsights = useMemo(() => {
+    const insights = generateAnomalyInsights(filteredData);
+    console.log("Generated Anomaly Insights:", insights); // Debugging log
+    return insights;
+  }, [filteredData]);
+
+  const suggestedActions = useMemo(() => {
+    const actions = getSuggestedActions(memoizedInsights);
+    console.log("Generated Suggested Actions:", actions); // Debugging log
+    return actions || []; // Ensure actions is always an array
+  }, [memoizedInsights]);
+
 
   return (
     <div
@@ -213,7 +229,7 @@ const Forecast: React.FC = () => {
             </h2>
             <AnomalyImpactForecast impacts={impacts} />
           </div>
-        ) : selectedChart !== "anomalyInsights" ? (
+        ) : selectedChart !== "anomalyInsights" && selectedChart !== "suggestedActions" ? (
           <div className="w-full h-[500px] bg-white p-4 rounded-xl shadow-lg">
             {selectedChart === "heatmap" ? (
               heatmapData.length > 0 ? (
@@ -248,51 +264,66 @@ const Forecast: React.FC = () => {
                 <p className="text-center text-gray-600">No anomaly data found.</p>
               )
             ) : (
-              <ResponsiveLine
-                data={getChartData()}
-                margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
-                xScale={{ type: "point" }}
-                yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
-                axisBottom={{
-                  tickRotation: -35,
-                  legend: "Time",
-                  legendOffset: 40,
-                  legendPosition: "middle",
-                }}
-                axisLeft={{
-                  legend:
-                    selectedChart === "vibration"
-                      ? "Vibration (g)"
-                      : selectedChart === "pressure"
-                      ? "Pressure (hPa)"
-                      : "Value",
-                  legendOffset: -40,
-                  legendPosition: "middle",
-                }}
-                colors={{ scheme: "category10" }}
-                pointSize={8}
-                pointBorderWidth={2}
-                useMesh={true}
-                legends={[
-                  {
-                    anchor: "top-left",
-                    direction: "row",
-                    translateY: -40,
-                    itemWidth: 150,
-                    itemHeight: 20,
-                    symbolSize: 12,
-                    symbolShape: "circle",
-                  },
-                ]}
-              />
+              getChartData().length > 0 ? (
+                <ResponsiveLine
+                  data={getChartData()}
+                  margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
+                  xScale={{ type: "point" }}
+                  yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
+                  axisBottom={{
+                    tickRotation: -35,
+                    legend: "Time",
+                    legendOffset: 40,
+                    legendPosition: "middle",
+                  }}
+                  axisLeft={{
+                    legend:
+                      selectedChart === "vibration"
+                        ? "Vibration (g)"
+                        : selectedChart === "pressure"
+                        ? "Pressure (hPa)"
+                        : "Value",
+                    legendOffset: -40,
+                    legendPosition: "middle",
+                  }}
+                  colors={{ scheme: "category10" }}
+                  pointSize={8}
+                  pointBorderWidth={2}
+                  useMesh={true}
+                  legends={[
+                    {
+                      anchor: "top-left",
+                      direction: "row",
+                      translateY: -40,
+                      itemWidth: 150,
+                      itemHeight: 20,
+                      symbolSize: 12,
+                      symbolShape: "circle",
+                    },
+                  ]}
+                />
+              ) : (
+                <p className="text-center text-gray-600">No data available for this chart.</p>
+              )
             )}
           </div>
-        ) : (
+        ) : selectedChart === "anomalyInsights" ? (
           <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">
               🔍 Anomaly Insights
             </h2>
-            <AnomalyInsightsSection anomalies={generateAnomalyInsights()} />
+            <AnomalyInsightsSection anomalies={memoizedInsights} />
+          </div>
+        ) : (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              🛠️ Suggested Actions
+            </h2>
+            {suggestedActions.length > 0 ? (
+              <SuggestedActions actions={suggestedActions} />
+            ) : (
+              <p className="text-center text-gray-600">No suggested actions available.</p>
+            )}
           </div>
         )}
       </div>
