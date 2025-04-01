@@ -6,7 +6,8 @@ import { format, parseISO, isAfter, isBefore } from "date-fns";
 import { Range } from "react-date-range";
 import DateRangePicker from "../components/DateRangePicker";
 import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
-import backgroundImage from "../assets/machine-background.jpg"; // Add the same background image
+import AnomalyInsightsSection from "../components/AnomalyInsightsSection";
+import backgroundImage from "../assets/machine-background.jpg";
 
 interface SensorRow {
   timestamp: string;
@@ -17,6 +18,7 @@ interface SensorRow {
 
 const Forecast: React.FC = () => {
   const [selectedChart, setSelectedChart] = useState("temperature");
+  const [showInsights, setShowInsights] = useState(false);
 
   const [range, setRange] = useState<Range[]>([
     {
@@ -41,12 +43,50 @@ const Forecast: React.FC = () => {
     );
   });
 
+  const generateAnomalyInsights = () => {
+    const insights = [];
+
+    for (const row of filteredData) {
+      const time = format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm");
+
+      if (row.temperature > 80) {
+        insights.push({
+          time,
+          metric: "Temperature",
+          severity: "High" as const,
+          description: "Overheating detected. Consider cooling inspection.",
+        });
+      }
+
+      if (row.vibration > 0.07) {
+        insights.push({
+          time,
+          metric: "Vibration",
+          severity: "Medium" as const,
+          description: "Unusual vibration. Possible imbalance or component wear.",
+        });
+      }
+
+      if (row.pressure > 1015) {
+        insights.push({
+          time,
+          metric: "Pressure",
+          severity: "Medium",
+          description: "Pressure exceeds expected limits. Check for blockages.",
+        });
+      }
+    }
+
+    return insights;
+  };
+
   const chartOptions = [
     { id: "temperature", title: "📈 Trend Forecast - Temperature", desc: "Shows predicted temperature changes. Spikes or drops may indicate overheating or cooling issues." },
     { id: "vibration", title: "📊 Trend Forecast - Vibration", desc: "Tracks vibration patterns over time. Abnormal spikes may signal imbalance or wear." },
     { id: "pressure", title: "🧪 Trend Forecast - Pressure", desc: "Monitors pressure trends. Sudden changes might indicate blockages or leaks." },
     { id: "comparative", title: "📊 Comparative Trends", desc: "Visual comparison of all three metrics to analyze cross-impact over time." },
     { id: "heatmap", title: "🔥 Anomaly Heatmap", desc: "Highlights when and where abnormal readings were detected across metrics." },
+    { id: "anomalyInsights", title: "🔍 Anomaly Insights", desc: "Detailed insights into detected anomalies, including severity and potential causes." },
   ];
 
   // Line chart data generator
@@ -145,7 +185,9 @@ const Forecast: React.FC = () => {
           {chartOptions.map((chart) => (
             <div
               key={chart.id}
-              onClick={() => setSelectedChart(chart.id)}
+              onClick={() => {setSelectedChart(chart.id);
+                setShowInsights(chart.id === "anomalyInsights");
+              }}
               className={`cursor-pointer transition-transform rounded-xl p-4 shadow-md border ${
                 selectedChart === chart.id
                   ? "bg-white border-purple-600 shadow-lg scale-105"
@@ -158,81 +200,89 @@ const Forecast: React.FC = () => {
           ))}
         </div>
 
-        {/* Chart Display */}
-        <div className="w-full h-[500px] max-w-7xl mx-auto bg-white p-4 rounded-xl shadow-lg">
-          {selectedChart === "heatmap" ? (
-            heatmapData.length > 0 ? (
-              <ResponsiveHeatMap
-                data={heatmapData}
-                margin={{ top: 60, right: 60, bottom: 60, left: 80 }}
-                axisTop={null}
-                axisRight={null}
+        {/* Chart Display or Anomaly Insights */}
+        {selectedChart !== "anomalyInsights" ? (
+          <div className="w-full h-[500px] bg-white p-4 rounded-xl shadow-lg">
+            {selectedChart === "heatmap" ? (
+              heatmapData.length > 0 ? (
+                <ResponsiveHeatMap
+                  data={heatmapData}
+                  margin={{ top: 60, right: 60, bottom: 60, left: 80 }}
+                  axisTop={null}
+                  axisRight={null}
+                  axisBottom={{
+                    tickSize: 5,
+                    tickPadding: 5,
+                    tickRotation: -30,
+                    legend: "Metric",
+                    legendOffset: 36,
+                    legendPosition: "middle",
+                  }}
+                  axisLeft={{
+                    tickSize: 5,
+                    tickPadding: 5,
+                    tickRotation: 0,
+                    legend: "Time",
+                    legendPosition: "middle",
+                    legendOffset: -72,
+                  }}
+                  borderColor={{ from: "color", modifiers: [["darker", 0.4]] }}
+                  labelTextColor={{ from: "color", modifiers: [["darker", 2]] }}
+                  colors={{ type: "sequential", scheme: "reds" }}
+                  animate={true}
+                  motionConfig="gentle"
+                />
+              ) : (
+                <p className="text-center text-gray-600">No anomaly data found.</p>
+              )
+            ) : (
+              <ResponsiveLine
+                data={getChartData()}
+                margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
+                xScale={{ type: "point" }}
+                yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
                 axisBottom={{
-                  tickSize: 5,
-                  tickPadding: 5,
-                  tickRotation: -30,
-                  legend: "Metric",
-                  legendOffset: 36,
+                  tickRotation: -35,
+                  legend: "Time",
+                  legendOffset: 40,
                   legendPosition: "middle",
                 }}
                 axisLeft={{
-                  tickSize: 5,
-                  tickPadding: 5,
-                  tickRotation: 0,
-                  legend: "Time",
+                  legend:
+                    selectedChart === "vibration"
+                      ? "Vibration (g)"
+                      : selectedChart === "pressure"
+                      ? "Pressure (hPa)"
+                      : "Value",
+                  legendOffset: -40,
                   legendPosition: "middle",
-                  legendOffset: -72,
                 }}
-                // Removed invalid property 'cellOpacity'
-                borderColor={{ from: "color", modifiers: [["darker", 0.4]] }}
-                labelTextColor={{ from: "color", modifiers: [["darker", 2]] }}
-                colors={{ type: "sequential", scheme: "reds" }}
-                animate={true}
-                motionConfig="gentle"
+                colors={{ scheme: "category10" }}
+                pointSize={8}
+                pointBorderWidth={2}
+                useMesh={true}
+                legends={[
+                  {
+                    anchor: "top-left",
+                    direction: "row",
+                    translateY: -40,
+                    itemWidth: 150,
+                    itemHeight: 20,
+                    symbolSize: 12,
+                    symbolShape: "circle",
+                  },
+                ]}
               />
-            ) : (
-              <p className="text-center text-gray-600">No anomaly data found.</p>
-            )
-          ) : (
-            <ResponsiveLine
-              data={getChartData()}
-              margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
-              xScale={{ type: "point" }}
-              yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
-              axisBottom={{
-                tickRotation: -35,
-                legend: "Time",
-                legendOffset: 40,
-                legendPosition: "middle",
-              }}
-              axisLeft={{
-                legend:
-                  selectedChart === "vibration"
-                    ? "Vibration (g)"
-                    : selectedChart === "pressure"
-                    ? "Pressure (hPa)"
-                    : "Value",
-                legendOffset: -40,
-                legendPosition: "middle",
-              }}
-              colors={{ scheme: "category10" }}
-              pointSize={8}
-              pointBorderWidth={2}
-              useMesh={true}
-              legends={[
-                {
-                  anchor: "top-left",
-                  direction: "row",
-                  translateY: -40,
-                  itemWidth: 150,
-                  itemHeight: 20,
-                  symbolSize: 12,
-                  symbolShape: "circle",
-                },
-              ]}
-            />
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          <div className="mt-10">
+            <h2 className="text-2xl font-semibold text-white mb-4">
+              🔍 Anomaly Insights
+            </h2>
+            <AnomalyInsightsSection anomalies={generateAnomalyInsights()} />
+          </div>
+        )}
       </div>
 
       {/* Hidden charts for PDF export */}
@@ -304,7 +354,8 @@ const Forecast: React.FC = () => {
         </div>
       </div>
 
-      {/* Background Image Layer */}
+
+      {/* Background image filter */}
       <img
         src={backgroundImage}
         alt="bg"
