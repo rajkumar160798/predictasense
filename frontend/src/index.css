@@ -93,6 +93,18 @@ button:focus-visible {
   }
 }
 
+@keyframes gradientFade {
+  0% {
+    background-image: linear-gradient(to right, #7E65E2, #4A4E69);
+  }
+  50% {
+    background-image: linear-gradient(to right, #4A4E69, #22223B);
+  }
+  100% {
+    background-image: linear-gradient(to right, #22223B, #7E65E2);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.6s ease-out;
 }
