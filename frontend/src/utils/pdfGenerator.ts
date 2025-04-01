@@ -5,7 +5,7 @@ import html2canvas from "html2canvas";
 export const generateForecastPDF = async () => {
   const pdf = new jsPDF("p", "pt", "a4");
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-  await delay(500); // Allow charts to fully render
+  await delay(50); // Allow charts to fully render
 
   // ======= Cover Page =======
   pdf.setFont("helvetica", "bold");
@@ -48,7 +48,7 @@ export const generateForecastPDF = async () => {
     const chart = document.getElementById(chartIds[i]);
     if (chart) {
       try {
-        await delay(400); // small delay
+        await delay(50); // small delay
         const canvas = await html2canvas(chart);
         const imgData = canvas.toDataURL("image/png");
 

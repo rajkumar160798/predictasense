@@ -22,7 +22,7 @@ const LandingPage: React.FC = () => {
       {/* Content */}
       <div className="z-10 flex flex-col items-center space-y-6">
         <img src={logo} alt="logo" className="w-28 h-28 rounded-full shadow-lg" />
-        <h1 className="text-6xl font-extrabold text-white">PredictAsense</h1>
+        <h1 className="text-20xl font-extrabold text-white">PredictAsense</h1>
         <p className="text-2xl text-white max-w-2xl">
           Smart AI-powered predictive maintenance tool that forecasts trends and detects anomalies from your sensor data.
         </p>
