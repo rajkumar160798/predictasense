@@ -14,6 +14,9 @@ import { getSuggestedActions } from "../utils/suggestedActions";
 import SuggestedActions from "../components/SuggestedActions";
 import { AnomalyInsight } from "../utils/types";
 import { useMemo } from "react";
+import { calculateAnomalyFrequency } from "../utils/anomalyFrequency";
+import AnomalyFrequencyTable from "../components/AnomalyFrequencyTable"; 
+
 interface SensorRow {
   timestamp: string;
   temperature: number;
@@ -94,6 +97,8 @@ const Forecast: React.FC = () => {
     { id: "anomalyInsights", title: "🔍 Anomaly Insights", desc: "Detailed insights into detected anomalies, including severity and potential causes." },
     { id: "anomalyImpact", title: "🧠 Anomaly Impact Forecast", desc: "Predicts the impact & risk of detected anomalies to prioritize maintenance." }, 
     { id: "suggestedActions", title: "🛠️ Suggested Actions", desc: "Recommendations based on detected anomalies." },
+    { id: "anomalyFrequency", title: "📋 Anomaly Frequency Summary", desc: "How often each anomaly type occurred with severity." },
+
   ];
 
   // Line chart data generator
@@ -168,6 +173,10 @@ const Forecast: React.FC = () => {
     return insights;
   }, [filteredData]);
 
+  const anomalyFrequencies = useMemo(() => {
+    return calculateAnomalyFrequency(memoizedInsights);
+  }, [memoizedInsights]);
+
   const suggestedActions = useMemo(() => {
     const actions = getSuggestedActions(memoizedInsights);
     console.log("Generated Suggested Actions:", actions); // Debugging log
@@ -229,7 +238,32 @@ const Forecast: React.FC = () => {
             </h2>
             <AnomalyImpactForecast impacts={impacts} />
           </div>
-        ) : selectedChart !== "anomalyInsights" && selectedChart !== "suggestedActions" ? (
+        ) : selectedChart === "anomalyInsights" ? (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              🔍 Anomaly Insights
+            </h2>
+            <AnomalyInsightsSection anomalies={memoizedInsights} />
+          </div>
+        ) : selectedChart === "suggestedActions" ? (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              🛠️ Suggested Actions
+            </h2>
+            {suggestedActions.length > 0 ? (
+              <SuggestedActions actions={suggestedActions} />
+            ) : (
+              <p className="text-center text-gray-600">No suggested actions available.</p>
+            )}
+          </div>
+        ) : selectedChart === "anomalyFrequency" ? (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              📋 Anomaly Frequency Summary
+            </h2>
+            <AnomalyFrequencyTable frequencies={anomalyFrequencies} />
+          </div>
+        ) : (
           <div className="w-full h-[500px] bg-white p-4 rounded-xl shadow-lg">
             {selectedChart === "heatmap" ? (
               heatmapData.length > 0 ? (
@@ -305,24 +339,6 @@ const Forecast: React.FC = () => {
               ) : (
                 <p className="text-center text-gray-600">No data available for this chart.</p>
               )
-            )}
-          </div>
-        ) : selectedChart === "anomalyInsights" ? (
-          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
-              🔍 Anomaly Insights
-            </h2>
-            <AnomalyInsightsSection anomalies={memoizedInsights} />
-          </div>
-        ) : (
-          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
-              🛠️ Suggested Actions
-            </h2>
-            {suggestedActions.length > 0 ? (
-              <SuggestedActions actions={suggestedActions} />
-            ) : (
-              <p className="text-center text-gray-600">No suggested actions available.</p>
             )}
           </div>
         )}
