@@ -17,6 +17,9 @@ import { useMemo } from "react";
 import { calculateAnomalyFrequency } from "../utils/anomalyFrequency";
 import AnomalyFrequencyTable from "../components/AnomalyFrequencyTable"; 
 import RootCauseTable from "../components/RootCauseTable"; 
+import { calculateHealthScore } from "../utils/healthScore";
+import HealthScoreCard from "../components/HealthScoreCard";
+
 
 interface SensorRow {
   timestamp: string;
@@ -100,6 +103,7 @@ const Forecast: React.FC = () => {
     { id: "suggestedActions", title: "🛠️ Suggested Actions", desc: "Recommendations based on detected anomalies." },
     { id: "anomalyFrequency", title: "📋 Anomaly Frequency Summary", desc: "How often each anomaly type occurred with severity." },
     { id: "rootCause", title: "🔎 Root Cause Engine (RCE)", desc: "Identifies potential root causes based on detected anomalies." },
+    { id: "healthScore", title: "🏥 Health Score", desc: "Overall system health based on anomaly severity and frequency." },
 
   ];
 
@@ -193,6 +197,8 @@ const Forecast: React.FC = () => {
     return actions || []; // Ensure actions is always an array
   }, [memoizedInsights]);
 
+  const healthScore = useMemo(() => calculateHealthScore(memoizedInsights), [memoizedInsights]);
+  console.log("Calculated Health Score:", healthScore); // Debugging log
 
   return (
     <div
@@ -286,6 +292,18 @@ const Forecast: React.FC = () => {
               <RootCauseTable causes={rootCauses} />
             ) : (
               <p className="text-center text-gray-600">No root cause data available.</p>
+            )}
+          </div>
+        ) : selectedChart === "healthScore" ? (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              Health Score
+            </h2>
+               <HealthScoreCard score={healthScore} />         
+            {healthScore < 50 && (
+              <p className="text-red-500 mt-2">
+                ⚠️ Low health score detected! Immediate attention required.
+              </p>
             )}
           </div>
         ) : (
