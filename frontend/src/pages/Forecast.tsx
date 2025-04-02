@@ -16,6 +16,7 @@ import { AnomalyInsight } from "../utils/types";
 import { useMemo } from "react";
 import { calculateAnomalyFrequency } from "../utils/anomalyFrequency";
 import AnomalyFrequencyTable from "../components/AnomalyFrequencyTable"; 
+import RootCauseTable from "../components/RootCauseTable"; 
 
 interface SensorRow {
   timestamp: string;
@@ -98,6 +99,7 @@ const Forecast: React.FC = () => {
     { id: "anomalyImpact", title: "🧠 Anomaly Impact Forecast", desc: "Predicts the impact & risk of detected anomalies to prioritize maintenance." }, 
     { id: "suggestedActions", title: "🛠️ Suggested Actions", desc: "Recommendations based on detected anomalies." },
     { id: "anomalyFrequency", title: "📋 Anomaly Frequency Summary", desc: "How often each anomaly type occurred with severity." },
+    { id: "rootCause", title: "🔎 Root Cause Engine (RCE)", desc: "Identifies potential root causes based on detected anomalies." },
 
   ];
 
@@ -174,7 +176,15 @@ const Forecast: React.FC = () => {
   }, [filteredData]);
 
   const anomalyFrequencies = useMemo(() => {
-    return calculateAnomalyFrequency(memoizedInsights);
+    const frequencies = calculateAnomalyFrequency(memoizedInsights);
+    console.log("Generated Anomaly Frequencies:", frequencies); // Debugging log
+    return frequencies || []; // Ensure frequencies is always an array
+  }, [memoizedInsights]);
+
+  const rootCauses = useMemo(() => {
+    const causes = generateRootCauses(memoizedInsights);
+    console.log("Generated Root Causes:", causes); // Debugging log
+    return causes || []; // Ensure causes is always an array
   }, [memoizedInsights]);
 
   const suggestedActions = useMemo(() => {
@@ -261,7 +271,22 @@ const Forecast: React.FC = () => {
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">
               📋 Anomaly Frequency Summary
             </h2>
-            <AnomalyFrequencyTable frequencies={anomalyFrequencies} />
+            {anomalyFrequencies.length > 0 ? (
+              <AnomalyFrequencyTable frequencies={anomalyFrequencies} />
+            ) : (
+              <p className="text-center text-gray-600">No anomaly frequency data available.</p>
+            )}
+          </div>
+        ) : selectedChart === "rootCause" ? (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              🔎 Root Cause Engine (RCE)
+            </h2>
+            {rootCauses.length > 0 ? (
+              <RootCauseTable causes={rootCauses} />
+            ) : (
+              <p className="text-center text-gray-600">No root cause data available.</p>
+            )}
           </div>
         ) : (
           <div className="w-full h-[500px] bg-white p-4 rounded-xl shadow-lg">
@@ -426,3 +451,45 @@ const Forecast: React.FC = () => {
 };
 
 export default Forecast;
+
+function generateRootCauses(memoizedInsights: AnomalyInsight[]) {
+  const rootCauses = memoizedInsights.map((insight) => {
+    switch (insight.metric) {
+      case "Temperature":
+        return {
+          metric: "Temperature",
+          rootCause: "Overheating due to insufficient cooling or high ambient temperature.",
+          severity: insight.severity,
+          time: insight.time,
+          timestamp: insight.time, // Assuming time is used as timestamp
+        };
+        case "Vibration":
+          return {
+            metric: "Vibration",
+            rootCause: "Possible imbalance, misalignment, or component wear.",
+            severity: insight.severity,
+            time: insight.time,
+            timestamp: insight.time, // Assuming time is used as timestamp
+          };
+        case "Pressure":
+          return {
+            metric: "Pressure",
+            rootCause: "Potential blockages, leaks, or faulty pressure sensors.",
+            severity: insight.severity,
+            time: insight.time,
+            timestamp: insight.time, // Assuming time is used as timestamp
+          };
+        default:
+          return {
+            metric: insight.metric,
+            rootCause: "Unknown cause.",
+            severity: insight.severity,
+            time: insight.time,
+            timestamp: insight.time, // Assuming time is used as timestamp
+          };
+    }
+  });
+
+  return rootCauses;
+}
+

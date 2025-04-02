@@ -1,4 +1,4 @@
-import { AnomalyInsight } from "./types";
+import { AnomalyInsight } from "../utils/types";
 
 export interface AnomalyFrequency {
   metric: string;
@@ -6,21 +6,37 @@ export interface AnomalyFrequency {
   count: number;
 }
 
-export function calculateAnomalyFrequency(insights: AnomalyInsight[]): AnomalyFrequency[] {
-  const frequencyMap: { [key: string]: number } = {};
+export function calculateAnomalyFrequency(anomalies: AnomalyInsight[]): AnomalyFrequency[] {
+  console.log("Calculating Anomaly Frequencies for:", anomalies); // Debugging log
 
-  for (const insight of insights) {
-    const key = `${insight.metric}-${insight.severity}`;
-    frequencyMap[key] = (frequencyMap[key] || 0) + 1;
+  if (!anomalies || anomalies.length === 0) {
+    console.log("No anomalies provided for frequency calculation."); // Debugging log
+    return [];
   }
 
-  // Convert to array
-  return Object.entries(frequencyMap).map(([key, count]) => {
-    const [metric, severity] = key.split("-");
-    return { metric, severity, count };
+  const frequencyMap: { [key: string]: { [key: string]: number } } = {};
+
+  anomalies.forEach((anomaly) => {
+    if (!frequencyMap[anomaly.metric]) {
+      frequencyMap[anomaly.metric] = {};
+    }
+    if (!frequencyMap[anomaly.metric][anomaly.severity]) {
+      frequencyMap[anomaly.metric][anomaly.severity] = 0;
+    }
+    frequencyMap[anomaly.metric][anomaly.severity]++;
   });
+
+  const frequencies: AnomalyFrequency[] = [];
+  for (const metric in frequencyMap) {
+    for (const severity in frequencyMap[metric]) {
+      frequencies.push({
+        metric,
+        severity,
+        count: frequencyMap[metric][severity],
+      });
+    }
+  }
+
+  console.log("Calculated Anomaly Frequencies:", frequencies); // Debugging log
+  return frequencies;
 }
-// Example usage
-// const insights: AnomalyInsight[] = [
-//   { time: "2023-10-01T12:00:00Z", metric: "Temperature", severity: "High", description: "High temperature detected" },
-//   { time: "2023-10-01T12:05:00Z", metric: "Vibration", severity: "Medium", description: "Vibration detected" },
