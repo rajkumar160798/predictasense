@@ -19,6 +19,7 @@ import AnomalyFrequencyTable from "../components/AnomalyFrequencyTable";
 import RootCauseTable from "../components/RootCauseTable"; 
 import { calculateHealthScore } from "../utils/healthScore";
 import HealthScoreCard from "../components/HealthScoreCard";
+import { getForecastFromAPI } from "../api/forecastService";
 
 
 interface SensorRow {
@@ -26,6 +27,12 @@ interface SensorRow {
   temperature: number;
   vibration: number;
   pressure: number;
+}
+
+interface ForecastPoint {
+  ds: string;
+  yhat: number;
+  failure_risk: boolean;
 }
 
 const Forecast: React.FC = () => {
@@ -54,6 +61,19 @@ const Forecast: React.FC = () => {
       (!endDate || !isAfter(date, endDate))
     );
   });
+  const [forecastData, setForecastData] = useState<ForecastPoint[]>([]);
+
+  const handleAutoMLForecast = async () => {
+    if (forecastData.length > 0) return; // already fetched
+    try {
+      const data = await getForecastFromAPI("2024-03-10 00:00:00", 7);
+      console.log("📥 Fetched Forecast Data:", data);
+      setForecastData(data);
+    } catch (error) {
+      console.error("Forecast API error:", error);
+    }
+  };
+  
 
   const generateAnomalyInsights = (data: SensorRow[]): AnomalyInsight[] => {
     const insights: AnomalyInsight[] = [];
@@ -104,6 +124,7 @@ const Forecast: React.FC = () => {
     { id: "anomalyFrequency", title: "📋 Anomaly Frequency Summary", desc: "How often each anomaly type occurred with severity." },
     { id: "rootCause", title: "🔎 Root Cause Engine (RCE)", desc: "Identifies potential root causes based on detected anomalies." },
     { id: "healthScore", title: "🏥 Health Score", desc: "Overall system health based on anomaly severity and frequency." },
+    { id: "autoMLForecast", title: "🤖 AutoML Forecast", desc: "Predictive model forecast for the next 7 days." },
 
   ];
 
@@ -137,6 +158,19 @@ const Forecast: React.FC = () => {
           { id: "Vibration", data: formatData("vibration") },
           { id: "Pressure", data: formatData("pressure") },
         ];
+      case "autoMLForecast":
+        console.log("📊 Rendering AutoML chart with data:", forecastData);
+        return forecastData.length > 0
+          ? [
+              {
+                id: "Prophet Prediction",
+                data: forecastData.map((f) => ({
+                  x: format(parseISO(f.ds), "yyyy-MM-dd HH:mm"), // Ensure proper date formatting
+                  y: f.yhat,
+                })),
+              },
+            ]
+          : []; // Return an empty array if no data is available
       default:
         return [];
     }
@@ -233,6 +267,9 @@ const Forecast: React.FC = () => {
               key={chart.id}
               onClick={() => {setSelectedChart(chart.id);
                 setShowInsights(chart.id === "anomalyInsights");
+                if (chart.id === "autoMLForecast") {
+                  handleAutoMLForecast(); // auto-fetch data when clicked
+                }
               }}
               className={`cursor-pointer transition-transform rounded-xl p-4 shadow-md border ${
                 selectedChart === chart.id
@@ -344,7 +381,7 @@ const Forecast: React.FC = () => {
               getChartData().length > 0 ? (
                 <ResponsiveLine
                   data={getChartData()}
-                  margin={{ top: 50, right: 110, bottom: 60, left: 60 }}
+                  margin={{ top: 50, right: 110, bottom: 100, left: 60 }}
                   xScale={{ type: "point" }}
                   yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
                   axisBottom={{
