@@ -62,15 +62,19 @@ const Forecast: React.FC = () => {
     );
   });
   const [forecastData, setForecastData] = useState<ForecastPoint[]>([]);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleAutoMLForecast = async () => {
     if (forecastData.length > 0) return; // already fetched
+    setLoading(true); // Set loading to true
     try {
       const data = await getForecastFromAPI("2024-03-10 00:00:00", 7);
       console.log("📥 Fetched Forecast Data:", data);
       setForecastData(data);
     } catch (error) {
       console.error("Forecast API error:", error);
+    } finally {
+      setLoading(false); // Set loading to false
     }
   };
   
@@ -163,10 +167,18 @@ const Forecast: React.FC = () => {
         return forecastData.length > 0
           ? [
               {
+                id: "Sensor (Recent)",
+                data: rawData.slice(-10).map((row) => ({
+                  x: format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm"),
+                  y: row.temperature, // Assuming temperature for comparison
+                })),
+              },
+              {
                 id: "Prophet Prediction",
                 data: forecastData.map((f) => ({
-                  x: format(parseISO(f.ds), "yyyy-MM-dd HH:mm"), // Ensure proper date formatting
+                  x: format(parseISO(f.ds), "yyyy-MM-dd HH:mm"),
                   y: f.yhat,
+                  failure_risk: f.failure_risk, // Include failure_risk in data points
                 })),
               },
             ]
@@ -379,48 +391,86 @@ const Forecast: React.FC = () => {
               )
             ) : (
               getChartData().length > 0 ? (
-                <ResponsiveLine
-                  data={getChartData()}
-                  margin={{ top: 50, right: 110, bottom: 100, left: 60 }}
-                  xScale={{ type: "point" }}
-                  yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
-                  axisBottom={{
-                    tickRotation: -35,
-                    legend: "Time",
-                    legendOffset: 40,
-                    legendPosition: "middle",
-                  }}
-                  axisLeft={{
-                    legend:
-                      selectedChart === "vibration"
-                        ? "Vibration (g)"
-                        : selectedChart === "pressure"
-                        ? "Pressure (hPa)"
-                        : "Value",
-                    legendOffset: -40,
-                    legendPosition: "middle",
-                  }}
-                  colors={{ scheme: "category10" }}
-                  pointSize={8}
-                  pointBorderWidth={2}
-                  useMesh={true}
-                  legends={[
-                    {
-                      anchor: "top-left",
-                      direction: "row",
-                      translateY: -40,
-                      itemWidth: 150,
-                      itemHeight: 20,
-                      symbolSize: 12,
-                      symbolShape: "circle",
-                    },
-                  ]}
-                />
+                <>
+                  <ResponsiveLine
+                    data={getChartData()}
+                    margin={{ top: 50, right: 110, bottom: 100, left: 60 }}
+                    xScale={{ type: "point" }}
+                    yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
+                    axisBottom={{
+                      tickRotation: -35,
+                      legend: "Time",
+                      legendOffset: 40,
+                      legendPosition: "middle",
+                    }}
+                    axisLeft={{
+                      legend:
+                        selectedChart === "vibration"
+                          ? "Vibration (g)"
+                          : selectedChart === "pressure"
+                          ? "Pressure (hPa)"
+                          : "Value",
+                      legendOffset: -40,
+                      legendPosition: "middle",
+                    }}
+                    colors={{ scheme: "category10" }}
+                    pointSize={8}
+                    pointBorderWidth={2}
+                    pointColor={(d) => (d.data.failure_risk ? "red" : d.color)} // Red for risk points
+                    tooltip={({ point }) => {
+                      const dataPoint = point.data as { xFormatted: string | number; yFormatted: string | number; failure_risk?: boolean };
+                      return (
+                        <div style={{ background: "white", padding: 8, border: "1px solid red", borderRadius: 4 }}>
+                          <strong>{dataPoint.xFormatted}</strong>
+                          <br />
+                          Value: {dataPoint.yFormatted}
+                          <br />
+                          {dataPoint.failure_risk && <span style={{ color: "red" }}>⚠️ High Failure Risk</span>}
+                        </div>
+                      );
+                    }}
+                    useMesh={true}
+                    legends={[
+                      {
+                        anchor: "top-left",
+                        direction: "row",
+                        translateY: -40,
+                        itemWidth: 150,
+                        itemHeight: 20,
+                        symbolSize: 12,
+                        symbolShape: "circle",
+                      },
+                    ]}
+                  />
+                  {/* Risk Summary Panel */}
+                  {selectedChart === "autoMLForecast" && forecastData.filter((f) => f.failure_risk).length > 0 && (
+                    <div className="bg-red-100 mt-4 p-4 rounded shadow text-left">
+                      <h3 className="text-red-600 font-semibold mb-2">⚠️ Failure Risks Detected</h3>
+                      <p className="text-sm mb-2">
+                        <strong>Total Risk Points:</strong> {forecastData.filter((f) => f.failure_risk).length}
+                      </p>
+                      <ul className="text-sm list-disc pl-5">
+                        {forecastData
+                          .filter((f) => f.failure_risk)
+                          .map((r, i) => (
+                            <li key={i}>
+                              <strong>{r.ds}</strong> → yhat: {r.yhat.toFixed(2)}
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
               ) : (
                 <p className="text-center text-gray-600">No data available for this chart.</p>
               )
             )}
           </div>
+        )}
+        {/* Loading State and Fallback */}
+        {loading && <p className="text-center text-gray-600">🔄 Generating forecast...</p>}
+        {!loading && selectedChart === "autoMLForecast" && forecastData.length === 0 && (
+          <p className="text-center text-gray-600">No forecast data available. Try refreshing. 🔄</p>
         )}
       </div>
 
