@@ -4,6 +4,7 @@ import { ResponsiveLine } from "@nivo/line";
 import { ResponsiveHeatMap } from "@nivo/heatmap";
 import { format, parseISO, isAfter, isBefore } from "date-fns";
 import { Range } from "react-date-range";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import DateRangePicker from "../components/DateRangePicker";
 import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
 import AnomalyInsightsSection from "../components/AnomalyInsightsSection";
@@ -46,6 +47,7 @@ interface ForecastPoint {
 const Forecast: React.FC = () => {
   const [selectedChart, setSelectedChart] = useState("temperature");
   const [showInsights, setShowInsights] = useState(false);
+  const navigate = useNavigate(); 
 
   const [range, setRange] = useState<Range[]>([
     {
@@ -875,6 +877,15 @@ const Forecast: React.FC = () => {
         className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
         style={{ filter: "brightness(0.4)" }}
       />
+      {/* Back to Upload Page Button */}
+      <div className="relative z-10 w-full flex justify-center py-4">
+        <button
+          onClick={() => navigate("/upload")} // Navigate to the Upload page
+          className="bg-white text-purple-700 px-6 py-3 rounded-full text-lg shadow-md hover:bg-purple-100 hover:shadow-lg transition"
+        >
+          🔙 Back to Upload Page
+        </button>
+      </div>      
     </div>
   );
 };
