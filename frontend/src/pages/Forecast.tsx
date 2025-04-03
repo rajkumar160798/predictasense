@@ -20,7 +20,7 @@ import RootCauseTable from "../components/RootCauseTable";
 import { calculateHealthScore } from "../utils/healthScore";
 import HealthScoreCard from "../components/HealthScoreCard";
 import { getForecastFromAPI } from "../api/forecastService";
-
+import { clusterAnomalies } from "../utils/anomalyClustering";
 
 interface SensorRow {
   timestamp: string;
@@ -129,6 +129,8 @@ const Forecast: React.FC = () => {
     { id: "rootCause", title: "🔎 Root Cause Engine (RCE)", desc: "Identifies potential root causes based on detected anomalies." },
     { id: "healthScore", title: "🏥 Health Score", desc: "Overall system health based on anomaly severity and frequency." },
     { id: "autoMLForecast", title: "🤖 AutoML Forecast", desc: "Predictive model forecast for the next 7 days." },
+    { id: "anomalyClusters", title: "🧬 Anomaly Clustering", desc: "Groups anomalies into clusters based on behavior." }
+
 
   ];
 
@@ -246,6 +248,24 @@ const Forecast: React.FC = () => {
   const healthScore = useMemo(() => calculateHealthScore(memoizedInsights), [memoizedInsights]);
   console.log("Calculated Health Score:", healthScore); // Debugging log
 
+  const clusteredAnomalies = useMemo(() => {
+    try {
+      const anomalyTimestamps = new Set(memoizedInsights.map((i) => i.time));
+  
+      const anomalies = filteredData.filter((row) => {
+        const formattedTime = format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm");
+        return anomalyTimestamps.has(formattedTime);
+      });
+  
+      const clustered = clusterAnomalies(anomalies);
+      console.log("✅ Clustered Anomalies:", clustered);
+      return clustered;
+    } catch (err) {
+      console.error("❌ Clustering error:", err);
+      return [];
+    }
+  }, [filteredData, memoizedInsights]);
+
   return (
     <div
       className="relative h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden"
@@ -277,7 +297,8 @@ const Forecast: React.FC = () => {
           {chartOptions.map((chart) => (
             <div
               key={chart.id}
-              onClick={() => {setSelectedChart(chart.id);
+              onClick={() => {
+                setSelectedChart(chart.id);
                 setShowInsights(chart.id === "anomalyInsights");
                 if (chart.id === "autoMLForecast") {
                   handleAutoMLForecast(); // auto-fetch data when clicked
@@ -289,7 +310,9 @@ const Forecast: React.FC = () => {
                   : "bg-white hover:shadow-lg"
               }`}
             >
-              <h2 className="font-semibold text-purple-800 mb-1">{chart.title}</h2>
+              <h2 className="font-semibold text-purple-800 mb-1">
+                {chart.title}
+              </h2>
               <p className="text-gray-700 text-sm">{chart.desc}</p>
             </div>
           ))}
@@ -318,7 +341,9 @@ const Forecast: React.FC = () => {
             {suggestedActions.length > 0 ? (
               <SuggestedActions actions={suggestedActions} />
             ) : (
-              <p className="text-center text-gray-600">No suggested actions available.</p>
+              <p className="text-center text-gray-600">
+                No suggested actions available.
+              </p>
             )}
           </div>
         ) : selectedChart === "anomalyFrequency" ? (
@@ -329,7 +354,9 @@ const Forecast: React.FC = () => {
             {anomalyFrequencies.length > 0 ? (
               <AnomalyFrequencyTable frequencies={anomalyFrequencies} />
             ) : (
-              <p className="text-center text-gray-600">No anomaly frequency data available.</p>
+              <p className="text-center text-gray-600">
+                No anomaly frequency data available.
+              </p>
             )}
           </div>
         ) : selectedChart === "rootCause" ? (
@@ -340,7 +367,9 @@ const Forecast: React.FC = () => {
             {rootCauses.length > 0 ? (
               <RootCauseTable causes={rootCauses} />
             ) : (
-              <p className="text-center text-gray-600">No root cause data available.</p>
+              <p className="text-center text-gray-600">
+                No root cause data available.
+              </p>
             )}
           </div>
         ) : selectedChart === "healthScore" ? (
@@ -348,10 +377,69 @@ const Forecast: React.FC = () => {
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">
               Health Score
             </h2>
-               <HealthScoreCard score={healthScore} />         
+            <HealthScoreCard score={healthScore} />
             {healthScore < 50 && (
               <p className="text-red-500 mt-2">
                 ⚠️ Low health score detected! Immediate attention required.
+              </p>
+            )}
+          </div>
+        ) : selectedChart === "healthScore" ? (
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              Health Score
+            </h2>
+            <HealthScoreCard score={healthScore} />
+            {healthScore < 50 && (
+              <p className="text-red-500 mt-2">
+                ⚠️ Low health score detected! Immediate attention required.
+              </p>
+            )}
+          </div>
+        ) : selectedChart === "anomalyClusters" ? (
+          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[400px] overflow-y-auto">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              🧬 Anomaly Clustering (KMeans)
+            </h2>
+            {clusteredAnomalies.length > 0 ? (
+              <table className="w-full text-left">
+                <caption className="text-gray-600 mb-2">
+                  Anomalies clustered into groups based on behavior.
+                </caption>
+                <thead>
+                  <tr className="bg-purple-200 text-purple-900">
+                    <th className="py-2 text-gray-800">Timestamp</th>
+                    <th className="py-2 text-gray-800">Temp</th>
+                    <th className="py-2 text-gray-800">Pressure</th>
+                    <th className="py-2 text-gray-800">Vibration</th>
+                    <th className="py-2 text-gray-800">Cluster</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {clusteredAnomalies.map((row, idx) => (
+                    <tr key={idx} className="border-b border-gray-200">
+                      <td className="py-1 text-gray-800">{row.timestamp}</td>
+                      <td className="py-1 text-gray-800">{row.temperature}</td>
+                      <td className="py-1 text-gray-800">{row.pressure}</td>
+                      <td className="py-1 text-gray-800">{row.vibration}</td>
+                      <td
+                        className={`py-1 font-bold ${
+                          row.cluster === 0
+                            ? "text-blue-600"
+                            : row.cluster === 1
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        #{row.cluster}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-center text-gray-500">
+                No clustered anomalies found.
               </p>
             )}
           </div>
@@ -387,100 +475,154 @@ const Forecast: React.FC = () => {
                   motionConfig="gentle"
                 />
               ) : (
-                <p className="text-center text-gray-600">No anomaly data found.</p>
+                <p className="text-center text-gray-600">
+                  No anomaly data found.
+                </p>
               )
-            ) : (
-              getChartData().length > 0 ? (
-                <>
-                  <ResponsiveLine
-                    data={getChartData()}
-                    margin={{ top: 50, right: 110, bottom: 100, left: 60 }}
-                    xScale={{ type: "point" }}
-                    yScale={{ type: "linear", min: "auto", max: "auto", stacked: false }}
-                    axisBottom={{
-                      tickRotation: -35,
-                      legend: "Time",
-                      legendOffset: 40,
-                      legendPosition: "middle",
-                    }}
-                    axisLeft={{
-                      legend:
-                        selectedChart === "vibration"
-                          ? "Vibration (g)"
-                          : selectedChart === "pressure"
-                          ? "Pressure (hPa)"
-                          : "Value",
-                      legendOffset: -40,
-                      legendPosition: "middle",
-                    }}
-                    colors={{ scheme: "category10" }}
-                    pointSize={8}
-                    pointBorderWidth={2}
-                    pointColor={(d) => (d.data.failure_risk ? "red" : d.color)} // Red for risk points
-                    tooltip={({ point }) => {
-                      const dataPoint = point.data as { xFormatted: string | number; yFormatted: string | number; failure_risk?: boolean };
-                      return (
-                        <div style={{ background: "white", padding: 8, border: "1px solid red", borderRadius: 4 }}>
-                          <strong>{dataPoint.xFormatted}</strong>
-                          <br />
-                          Value: {dataPoint.yFormatted}
-                          <br />
-                          {dataPoint.failure_risk && <span style={{ color: "red" }}>⚠️ High Failure Risk</span>}
-                        </div>
-                      );
-                    }}
-                    useMesh={true}
-                    legends={[
-                      {
-                        anchor: "top-left",
-                        direction: "row",
-                        translateY: -40,
-                        itemWidth: 150,
-                        itemHeight: 20,
-                        symbolSize: 12,
-                        symbolShape: "circle",
-                      },
-                    ]}
-                  />
-                  {/* Risk Summary Panel */}
-                  {selectedChart === "autoMLForecast" && forecastData.filter((f) => f.failure_risk).length > 0 && (
+            ) : getChartData().length > 0 ? (
+              <>
+                <ResponsiveLine
+                  data={getChartData()}
+                  margin={{ top: 50, right: 110, bottom: 100, left: 60 }}
+                  xScale={{ type: "point" }}
+                  yScale={{
+                    type: "linear",
+                    min: "auto",
+                    max: "auto",
+                    stacked: false,
+                  }}
+                  axisBottom={{
+                    tickRotation: -35,
+                    legend: "Time",
+                    legendOffset: 40,
+                    legendPosition: "middle",
+                  }}
+                  axisLeft={{
+                    legend:
+                      selectedChart === "vibration"
+                        ? "Vibration (g)"
+                        : selectedChart === "pressure"
+                        ? "Pressure (hPa)"
+                        : "Value",
+                    legendOffset: -40,
+                    legendPosition: "middle",
+                  }}
+                  colors={{ scheme: "category10" }}
+                  pointSize={8}
+                  pointBorderWidth={2}
+                  pointColor={(d) => (d.data.failure_risk ? "red" : d.color)} // Red for risk points
+                  tooltip={({ point }) => {
+                    const dataPoint = point.data as {
+                      xFormatted: string | number;
+                      yFormatted: string | number;
+                      failure_risk?: boolean;
+                    };
+                    return (
+                      <div
+                        style={{
+                          background: "white",
+                          padding: 8,
+                          border: "1px solid red",
+                          borderRadius: 4,
+                        }}
+                      >
+                        <strong>{dataPoint.xFormatted}</strong>
+                        <br />
+                        Value: {dataPoint.yFormatted}
+                        <br />
+                        {dataPoint.failure_risk && (
+                          <span style={{ color: "red" }}>
+                            ⚠️ High Failure Risk
+                          </span>
+                        )}
+                      </div>
+                    );
+                  }}
+                  useMesh={true}
+                  legends={[
+                    {
+                      anchor: "top-left",
+                      direction: "row",
+                      translateY: -40,
+                      itemWidth: 150,
+                      itemHeight: 20,
+                      symbolSize: 12,
+                      symbolShape: "circle",
+                    },
+                  ]}
+                />
+                {/* Risk Summary Panel */}
+                {selectedChart === "autoMLForecast" &&
+                  forecastData.filter((f) => f.failure_risk).length > 0 && (
                     <div className="bg-red-100 mt-4 p-4 rounded shadow text-left">
-                      <h3 className="text-red-600 font-semibold mb-2">⚠️ Failure Risks Detected</h3>
+                      <h3 className="text-red-600 font-semibold mb-2">
+                        ⚠️ Failure Risks Detected
+                      </h3>
                       <p className="text-sm mb-2">
-                        <strong>Total Risk Points:</strong> {forecastData.filter((f) => f.failure_risk).length}
+                        <strong>Total Risk Points:</strong>{" "}
+                        {forecastData.filter((f) => f.failure_risk).length}
                       </p>
                       <ul className="text-sm list-disc pl-5">
                         {forecastData
                           .filter((f) => f.failure_risk)
                           .map((r, i) => (
                             <li key={i}>
-                              <strong>{r.ds}</strong> → yhat: {r.yhat.toFixed(2)}
+                              <strong>{r.ds}</strong> → yhat:{" "}
+                              {r.yhat.toFixed(2)}
                             </li>
                           ))}
                       </ul>
                     </div>
                   )}
-                </>
-              ) : (
-                <p className="text-center text-gray-600">No data available for this chart.</p>
-              )
+              </>
+            ) : (
+              <p className="text-center text-gray-600">
+                No data available for this chart.
+              </p>
             )}
           </div>
         )}
         {/* Loading State and Fallback */}
-        {loading && <p className="text-center text-gray-600">🔄 Generating forecast...</p>}
-        {!loading && selectedChart === "autoMLForecast" && forecastData.length === 0 && (
-          <p className="text-center text-gray-600">No forecast data available. Try refreshing. 🔄</p>
+        {loading && (
+          <p className="text-center text-gray-600">🔄 Generating forecast...</p>
         )}
+        {!loading &&
+          selectedChart === "autoMLForecast" &&
+          forecastData.length === 0 && (
+            <p className="text-center text-gray-600">
+              No forecast data available. Try refreshing. 🔄
+            </p>
+          )}
       </div>
 
       {/* Hidden charts for PDF export */}
-      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", opacity: 0, pointerEvents: "none" }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          opacity: 0,
+          pointerEvents: "none",
+        }}
+      >
         <div id="chart-temperature" style={{ width: 800, height: 500 }}>
           <ResponsiveLine
             data={[
-              { id: "Actual", data: filteredData.map((row) => ({ x: row.timestamp, y: row.temperature })) },
-              { id: "Forecast", data: filteredData.map((row) => ({ x: row.timestamp, y: row.temperature - 1.5 })) },
+              {
+                id: "Actual",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.temperature,
+                })),
+              },
+              {
+                id: "Forecast",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.temperature - 1.5,
+                })),
+              },
             ]}
             xScale={{ type: "point" }}
             yScale={{ type: "linear" }}
@@ -492,8 +634,20 @@ const Forecast: React.FC = () => {
         <div id="chart-vibration" style={{ width: 800, height: 500 }}>
           <ResponsiveLine
             data={[
-              { id: "Actual", data: filteredData.map((row) => ({ x: row.timestamp, y: row.vibration })) },
-              { id: "Forecast", data: filteredData.map((row) => ({ x: row.timestamp, y: row.vibration + 0.005 })) },
+              {
+                id: "Actual",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.vibration,
+                })),
+              },
+              {
+                id: "Forecast",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.vibration + 0.005,
+                })),
+              },
             ]}
             xScale={{ type: "point" }}
             yScale={{ type: "linear" }}
@@ -505,8 +659,20 @@ const Forecast: React.FC = () => {
         <div id="chart-pressure" style={{ width: 800, height: 500 }}>
           <ResponsiveLine
             data={[
-              { id: "Actual", data: filteredData.map((row) => ({ x: row.timestamp, y: row.pressure })) },
-              { id: "Forecast", data: filteredData.map((row) => ({ x: row.timestamp, y: row.pressure - 1 })) },
+              {
+                id: "Actual",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.pressure,
+                })),
+              },
+              {
+                id: "Forecast",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.pressure - 1,
+                })),
+              },
             ]}
             xScale={{ type: "point" }}
             yScale={{ type: "linear" }}
@@ -518,9 +684,27 @@ const Forecast: React.FC = () => {
         <div id="chart-comparative" style={{ width: 800, height: 500 }}>
           <ResponsiveLine
             data={[
-              { id: "Temperature", data: filteredData.map((row) => ({ x: row.timestamp, y: row.temperature })) },
-              { id: "Vibration", data: filteredData.map((row) => ({ x: row.timestamp, y: row.vibration })) },
-              { id: "Pressure", data: filteredData.map((row) => ({ x: row.timestamp, y: row.pressure })) },
+              {
+                id: "Temperature",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.temperature,
+                })),
+              },
+              {
+                id: "Vibration",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.vibration,
+                })),
+              },
+              {
+                id: "Pressure",
+                data: filteredData.map((row) => ({
+                  x: row.timestamp,
+                  y: row.pressure,
+                })),
+              },
             ]}
             xScale={{ type: "point" }}
             yScale={{ type: "linear" }}
@@ -542,7 +726,6 @@ const Forecast: React.FC = () => {
           />
         </div>
       </div>
-
 
       {/* Background image filter */}
       <img
