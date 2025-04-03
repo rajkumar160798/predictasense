@@ -25,6 +25,8 @@ import { prioritizeAlerts } from "../utils/alertPrioritization";
 import AlertPriorityTable from "../components/AlertPriorityTable";
 import ClusterPCAPlot from "../components/ClusterPCAPlot";
 import { get2DClusterData } from "../utils/pcaUtils";
+import TrendEvolutionTabs from "../components/TrendEvolutionTabs";
+import { computeWeeklyTrends } from "../utils/trendEvolution"; 
 
 interface SensorRow {
   timestamp: string;
@@ -195,6 +197,12 @@ const Forecast: React.FC = () => {
       title: "📉 Cluster Visualization (PCA)",
       desc: "2D plot of anomaly clusters using PCA for interpretation.",
     },
+    {
+      id: "trendEvolution",
+      title: "📆 Trend Evolution Charts",
+      desc: "Track weekly trends in sensor metrics.",
+    },
+    
     
   ];
 
@@ -494,6 +502,11 @@ const Forecast: React.FC = () => {
                 ⚠️ Low health score detected! Immediate attention required.
               </p>
             )}
+          </div>
+        ) : selectedChart === "trendEvolution" ? (
+          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">📆 Weekly Trend Evolution</h2>
+            <TrendEvolutionTabs data={filteredData} />
           </div>
         ) : selectedChart === "anomalyClusters" ? (
           <div className="bg-white p-4 rounded-xl shadow-lg max-h-[400px] overflow-y-auto">
