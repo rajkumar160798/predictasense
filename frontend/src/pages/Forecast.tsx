@@ -378,13 +378,16 @@ const Forecast: React.FC = () => {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        backgroundAttachment: "fixed", 
+        backgroundRepeat: "no-repeat",
+        backgroundBlendMode: "overlay",
       }}
     >
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
 
       {/* Content */}
-      <div className="z-10 w-full px-4 py-8">
+      <div className="z-10 w-full px-4 py-8 overflow-y-auto" style={{ maxHeight: "100vh" }}>
         <h1 className="text-4xl font-bold text-center text-white mb-6">
           📊 Forecast Dashboard
         </h1>
@@ -519,7 +522,7 @@ const Forecast: React.FC = () => {
             )}
           </div>
         ) : selectedChart === "showRootConfidence" ? (
-          <div className="bg-white mt-4 p-4 rounded-xl shadow-lg">
+          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[400px] overflow-y-auto">
             <h3 className="text-xl font-semibold text-purple-700 mb-2">
               📊 Root Cause Confidence Scoring
             </h3>
