@@ -93,12 +93,21 @@ const Upload: React.FC = () => {
           </ul>
         </div>
 
-        <input
-          type="file"
-          accept=".csv"
-          onChange={handleFileUpload}
-          className="bg-purple-50 border border-purple-300 rounded-lg p-4 mb-10 shadow cursor-pointer"
-        />
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="file-upload"
+            className="cursor-pointer bg-white text-purple-700 px-4 py-2 rounded shadow-md hover:bg-purple-400 hover:shadow-lg transition"
+          >
+            Choose File
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+            </div>
 
         {data.length > 0 && (
           <div className="mt-6">

@@ -7,18 +7,31 @@ export function calculateHealthScore(anomalies: AnomalyInsight[]): number {
   const severityWeight = {
     High: 3,
     Medium: 2,
-    Low: 1, // for future use
+    Low: 1,
   };
 
-  const totalWeight = anomalies.reduce((acc, a) => {
-    return acc + (severityWeight[a.severity] || 0);
+  const totalSeverity = anomalies.reduce((sum, anomaly) => {
+    return sum + (severityWeight[anomaly.severity] || 0);
   }, 0);
 
-  const maxWeight = anomalies.length * 3; // all High = worst case
+  // Normalize based on time range:
+  const uniqueTimestamps = new Set(anomalies.map(a => a.time));
+  const dataWindowSize = uniqueTimestamps.size;
 
-  const score = Math.max(0, Math.round(100 - (totalWeight / maxWeight) * 100));
-  return score;
+  // Max severity possible for this data window
+  const maxPossibleSeverity = dataWindowSize * severityWeight["High"];
+
+  // Adjust the score to avoid being too harsh on short periods
+  let score = 100 - (totalSeverity / maxPossibleSeverity) * 100;
+
+  // Safety clamp
+  if (score < 20 && totalSeverity <= 3) {
+    score = 65; // Don't scare users with a 0 unless it's very serious
+  }
+
+  return Math.round(Math.max(0, Math.min(100, score)));
 }
+
 // Example usage
 // const anomalies: AnomalyInsight[] = [
 //   { time: "2023-10-01T12:00:00Z", metric: "Temperature", severity: "High", description: "Overheating" },

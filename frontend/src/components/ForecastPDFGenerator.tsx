@@ -6,7 +6,7 @@ const ForecastPDFGenerator: React.FC = () => {
   return (
     <button
       onClick={generateForecastPDF}
-      className="bg-purple-700 text-blue px-4 py-2 rounded hover:bg-purple-800 mt-4"
+      className="bg-white text-purple-700 px-6 py-3 rounded-full text-lg shadow-md hover:bg-purple-100 hover:shadow-lg transition !bg-white"
     >
       📄 Download Full Forecast Report
     </button>
