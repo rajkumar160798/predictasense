@@ -23,6 +23,8 @@ import { getForecastFromAPI } from "../api/forecastService";
 import { clusterAnomalies } from "../utils/anomalyClustering";
 import { prioritizeAlerts } from "../utils/alertPrioritization";
 import AlertPriorityTable from "../components/AlertPriorityTable";
+import ClusterPCAPlot from "../components/ClusterPCAPlot";
+import { get2DClusterData } from "../utils/pcaUtils";
 
 interface SensorRow {
   timestamp: string;
@@ -188,6 +190,12 @@ const Forecast: React.FC = () => {
       title: "🚨 Smart Alert Prioritization", 
       desc: "Ranks alerts based on severity, frequency, and impact." 
     },
+    {
+      id: "clusterVisualization",
+      title: "📉 Cluster Visualization (PCA)",
+      desc: "2D plot of anomaly clusters using PCA for interpretation.",
+    },
+    
   ];
 
   // Line chart data generator
@@ -316,7 +324,7 @@ const Forecast: React.FC = () => {
   const clusteredAnomalies = useMemo(() => {
     try {
       const anomalyTimestamps = new Set(memoizedInsights.map((i) => i.time));
-
+  
       const anomalies = filteredData.filter((row) => {
         const formattedTime = format(
           parseISO(row.timestamp),
@@ -324,10 +332,16 @@ const Forecast: React.FC = () => {
         );
         return anomalyTimestamps.has(formattedTime);
       });
-
+  
       const clustered = clusterAnomalies(anomalies);
-      console.log("✅ Clustered Anomalies:", clustered);
-      return clustered;
+  
+      const enriched = clustered.map((item, idx) => ({
+        ...item,
+        timestamp: anomalies[idx].timestamp, // ✅ attach timestamp from original data
+      }));
+  
+      console.log("✅ Clustered Anomalies (with timestamp):", enriched);
+      return enriched;
     } catch (err) {
       console.error("❌ Clustering error:", err);
       return [];
@@ -461,6 +475,13 @@ const Forecast: React.FC = () => {
                 ⚠️ Low health score detected! Immediate attention required.
               </p>
             )}
+          </div>
+        ) : selectedChart === "clusterVisualization" ? (
+          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              🧬 Cluster Visualization (PCA)
+            </h2>
+            <ClusterPCAPlot points={get2DClusterData(clusteredAnomalies)} />
           </div>
         ) : selectedChart === "healthScore" ? (
           <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
