@@ -51,3 +51,24 @@ export function computeAnomalyImpact(data: SensorRow[]): ImpactEntry[] {
 
   return impacts;
 }
+
+// ✅ 2. Helper to convert to a metric → score map (used for prioritization)
+export function getImpactScorePerMetric(entries: ImpactEntry[]): { [metric: string]: number } {
+  const impactMap: { [metric: string]: number[] } = {};
+
+  for (const entry of entries) {
+    if (!impactMap[entry.metric]) {
+      impactMap[entry.metric] = [];
+    }
+    impactMap[entry.metric].push(entry.riskScore);
+  }
+
+  const averagedImpact: { [metric: string]: number } = {};
+  for (const metric in impactMap) {
+    const scores = impactMap[metric];
+    const avg = scores.reduce((sum, val) => sum + val, 0) / scores.length;
+    averagedImpact[metric] = parseFloat((avg / 100).toFixed(2)); // Normalize to 0–1
+  }
+
+  return averagedImpact;
+}

@@ -8,7 +8,7 @@ import DateRangePicker from "../components/DateRangePicker";
 import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
 import AnomalyInsightsSection from "../components/AnomalyInsightsSection";
 import backgroundImage from "../assets/machine-background.jpg";
-import { computeAnomalyImpact } from "../utils/impactForecast";
+import { computeAnomalyImpact, getImpactScorePerMetric } from "../utils/impactForecast";
 import AnomalyImpactForecast from "../components/AnomalyImpactForecast";
 import { getSuggestedActions } from "../utils/suggestedActions";
 import SuggestedActions from "../components/SuggestedActions";
@@ -21,6 +21,8 @@ import { calculateHealthScore } from "../utils/healthScore";
 import HealthScoreCard from "../components/HealthScoreCard";
 import { getForecastFromAPI } from "../api/forecastService";
 import { clusterAnomalies } from "../utils/anomalyClustering";
+import { prioritizeAlerts } from "../utils/alertPrioritization";
+import AlertPriorityTable from "../components/AlertPriorityTable";
 
 interface SensorRow {
   timestamp: string;
@@ -77,14 +79,13 @@ const Forecast: React.FC = () => {
       setLoading(false); // Set loading to false
     }
   };
-  
 
   const generateAnomalyInsights = (data: SensorRow[]): AnomalyInsight[] => {
     const insights: AnomalyInsight[] = [];
-  
+
     for (const row of data) {
       const time = format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm");
-  
+
       if (row.temperature > 80) {
         insights.push({
           time,
@@ -93,16 +94,17 @@ const Forecast: React.FC = () => {
           description: "Overheating detected. Consider cooling inspection.",
         });
       }
-  
+
       if (row.vibration > 0.07) {
         insights.push({
           time,
           metric: "Vibration",
           severity: "Medium",
-          description: "Unusual vibration. Possible imbalance or component wear.",
+          description:
+            "Unusual vibration. Possible imbalance or component wear.",
         });
       }
-  
+
       if (row.pressure > 1015) {
         insights.push({
           time,
@@ -117,21 +119,75 @@ const Forecast: React.FC = () => {
   };
 
   const chartOptions = [
-    { id: "temperature", title: "📈 Trend Forecast - Temperature", desc: "Shows predicted temperature changes. Spikes or drops may indicate overheating or cooling issues." },
-    { id: "vibration", title: "📊 Trend Forecast - Vibration", desc: "Tracks vibration patterns over time. Abnormal spikes may signal imbalance or wear." },
-    { id: "pressure", title: "🧪 Trend Forecast - Pressure", desc: "Monitors pressure trends. Sudden changes might indicate blockages or leaks." },
-    { id: "comparative", title: "📊 Comparative Trends", desc: "Visual comparison of all three metrics to analyze cross-impact over time." },
-    { id: "heatmap", title: "🔥 Anomaly Heatmap", desc: "Highlights when and where abnormal readings were detected across metrics." },
-    { id: "anomalyInsights", title: "🔍 Anomaly Insights", desc: "Detailed insights into detected anomalies, including severity and potential causes." },
-    { id: "anomalyImpact", title: "🧠 Anomaly Impact Forecast", desc: "Predicts the impact & risk of detected anomalies to prioritize maintenance." }, 
-    { id: "suggestedActions", title: "🛠️ Suggested Actions", desc: "Recommendations based on detected anomalies." },
-    { id: "anomalyFrequency", title: "📋 Anomaly Frequency Summary", desc: "How often each anomaly type occurred with severity." },
-    { id: "rootCause", title: "🔎 Root Cause Engine (RCE)", desc: "Identifies potential root causes based on detected anomalies." },
-    { id: "healthScore", title: "🏥 Health Score", desc: "Overall system health based on anomaly severity and frequency." },
-    { id: "autoMLForecast", title: "🤖 AutoML Forecast", desc: "Predictive model forecast for the next 7 days." },
-    { id: "anomalyClusters", title: "🧬 Anomaly Clustering", desc: "Groups anomalies into clusters based on behavior." }
-
-
+    {
+      id: "temperature",
+      title: "📈 Trend Forecast - Temperature",
+      desc: "Shows predicted temperature changes. Spikes or drops may indicate overheating or cooling issues.",
+    },
+    {
+      id: "vibration",
+      title: "📊 Trend Forecast - Vibration",
+      desc: "Tracks vibration patterns over time. Abnormal spikes may signal imbalance or wear.",
+    },
+    {
+      id: "pressure",
+      title: "🧪 Trend Forecast - Pressure",
+      desc: "Monitors pressure trends. Sudden changes might indicate blockages or leaks.",
+    },
+    {
+      id: "comparative",
+      title: "📊 Comparative Trends",
+      desc: "Visual comparison of all three metrics to analyze cross-impact over time.",
+    },
+    {
+      id: "heatmap",
+      title: "🔥 Anomaly Heatmap",
+      desc: "Highlights when and where abnormal readings were detected across metrics.",
+    },
+    {
+      id: "anomalyInsights",
+      title: "🔍 Anomaly Insights",
+      desc: "Detailed insights into detected anomalies, including severity and potential causes.",
+    },
+    {
+      id: "anomalyImpact",
+      title: "🧠 Anomaly Impact Forecast",
+      desc: "Predicts the impact & risk of detected anomalies to prioritize maintenance.",
+    },
+    {
+      id: "suggestedActions",
+      title: "🛠️ Suggested Actions",
+      desc: "Recommendations based on detected anomalies.",
+    },
+    {
+      id: "anomalyFrequency",
+      title: "📋 Anomaly Frequency Summary",
+      desc: "How often each anomaly type occurred with severity.",
+    },
+    {
+      id: "rootCause",
+      title: "🔎 Root Cause Engine (RCE)",
+      desc: "Identifies potential root causes based on detected anomalies.",
+    },
+    {
+      id: "healthScore",
+      title: "🏥 Health Score",
+      desc: "Overall system health based on anomaly severity and frequency.",
+    },
+    {
+      id: "autoMLForecast",
+      title: "🤖 AutoML Forecast",
+      desc: "Predictive model forecast for the next 7 days.",
+    },
+    {
+      id: "anomalyClusters",
+      title: "🧬 Anomaly Clustering",
+      desc: "Groups anomalies into clusters based on behavior.",
+    },
+    { id: "alertPriority", 
+      title: "🚨 Smart Alert Prioritization", 
+      desc: "Ranks alerts based on severity, frequency, and impact." 
+    },
   ];
 
   // Line chart data generator
@@ -193,7 +249,11 @@ const Forecast: React.FC = () => {
   // Heatmap data generator using the "series" format
   const getAnomalyHeatmapData = () => {
     const hourlyBuckets: {
-      [hour: string]: { Temperature: number; Vibration: number; Pressure: number };
+      [hour: string]: {
+        Temperature: number;
+        Vibration: number;
+        Pressure: number;
+      };
     } = {};
 
     filteredData.forEach((row) => {
@@ -219,8 +279,10 @@ const Forecast: React.FC = () => {
   };
 
   const heatmapData = getAnomalyHeatmapData();
-  const impacts = computeAnomalyImpact(filteredData);
-  
+  const impactEntries = computeAnomalyImpact(filteredData);
+  const impacts = computeAnomalyImpact(filteredData); // For component
+  const impactScores = getImpactScorePerMetric(impacts); 
+  console.log("Impact Scores:", impactScores); // Debugging log
   const memoizedInsights = useMemo(() => {
     const insights = generateAnomalyInsights(filteredData);
     console.log("Generated Anomaly Insights:", insights); // Debugging log
@@ -245,18 +307,24 @@ const Forecast: React.FC = () => {
     return actions || []; // Ensure actions is always an array
   }, [memoizedInsights]);
 
-  const healthScore = useMemo(() => calculateHealthScore(memoizedInsights), [memoizedInsights]);
+  const healthScore = useMemo(
+    () => calculateHealthScore(memoizedInsights),
+    [memoizedInsights]
+  );
   console.log("Calculated Health Score:", healthScore); // Debugging log
 
   const clusteredAnomalies = useMemo(() => {
     try {
       const anomalyTimestamps = new Set(memoizedInsights.map((i) => i.time));
-  
+
       const anomalies = filteredData.filter((row) => {
-        const formattedTime = format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm");
+        const formattedTime = format(
+          parseISO(row.timestamp),
+          "yyyy-MM-dd HH:mm"
+        );
         return anomalyTimestamps.has(formattedTime);
       });
-  
+
       const clustered = clusterAnomalies(anomalies);
       console.log("✅ Clustered Anomalies:", clustered);
       return clustered;
@@ -301,6 +369,11 @@ const Forecast: React.FC = () => {
                 setSelectedChart(chart.id);
                 setShowInsights(chart.id === "anomalyInsights");
                 if (chart.id === "autoMLForecast") {
+                  // Scroll to chart display section
+                  const chartSection = document.getElementById(
+                    "chart-display-section"
+                  );
+                  chartSection?.scrollIntoView({ behavior: "smooth" });
                   handleAutoMLForecast(); // auto-fetch data when clicked
                 }
               }}
@@ -346,7 +419,12 @@ const Forecast: React.FC = () => {
               </p>
             )}
           </div>
-        ) : selectedChart === "anomalyFrequency" ? (
+        ) : selectedChart === "alertPriority" ? (
+          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[400px] overflow-y-auto">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">🚨 Smart Alert Prioritization</h2>
+            <AlertPriorityTable alerts={prioritizeAlerts(memoizedInsights, impactScores)} />
+          </div>
+        ) :selectedChart === "anomalyFrequency" ? (
           <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">
               📋 Anomaly Frequency Summary
@@ -746,38 +824,38 @@ function generateRootCauses(memoizedInsights: AnomalyInsight[]) {
       case "Temperature":
         return {
           metric: "Temperature",
-          rootCause: "Overheating due to insufficient cooling or high ambient temperature.",
+          rootCause:
+            "Overheating due to insufficient cooling or high ambient temperature.",
           severity: insight.severity,
           time: insight.time,
           timestamp: insight.time, // Assuming time is used as timestamp
         };
-        case "Vibration":
-          return {
-            metric: "Vibration",
-            rootCause: "Possible imbalance, misalignment, or component wear.",
-            severity: insight.severity,
-            time: insight.time,
-            timestamp: insight.time, // Assuming time is used as timestamp
-          };
-        case "Pressure":
-          return {
-            metric: "Pressure",
-            rootCause: "Potential blockages, leaks, or faulty pressure sensors.",
-            severity: insight.severity,
-            time: insight.time,
-            timestamp: insight.time, // Assuming time is used as timestamp
-          };
-        default:
-          return {
-            metric: insight.metric,
-            rootCause: "Unknown cause.",
-            severity: insight.severity,
-            time: insight.time,
-            timestamp: insight.time, // Assuming time is used as timestamp
-          };
+      case "Vibration":
+        return {
+          metric: "Vibration",
+          rootCause: "Possible imbalance, misalignment, or component wear.",
+          severity: insight.severity,
+          time: insight.time,
+          timestamp: insight.time, // Assuming time is used as timestamp
+        };
+      case "Pressure":
+        return {
+          metric: "Pressure",
+          rootCause: "Potential blockages, leaks, or faulty pressure sensors.",
+          severity: insight.severity,
+          time: insight.time,
+          timestamp: insight.time, // Assuming time is used as timestamp
+        };
+      default:
+        return {
+          metric: insight.metric,
+          rootCause: "Unknown cause.",
+          severity: insight.severity,
+          time: insight.time,
+          timestamp: insight.time, // Assuming time is used as timestamp
+        };
     }
   });
 
   return rootCauses;
 }
-
