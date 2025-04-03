@@ -28,6 +28,7 @@ import { get2DClusterData } from "../utils/pcaUtils";
 import TrendEvolutionTabs from "../components/TrendEvolutionTabs";
 import { scoreRootCauses } from "../utils/rootCauseConfidence";
 import RootCauseConfidenceTable from "../components/RootCauseConfidenceTable";
+import AnomalyTimeline from "../components/AnomalyTimeline";
 
 interface SensorRow {
   timestamp: string;
@@ -207,6 +208,11 @@ const Forecast: React.FC = () => {
       id: "showRootConfidence",
       title: "📊 Root Cause Confidence Scoring",
       desc: "Confidence scores for root causes based on detected anomalies.",
+    },
+    {
+      id: "anomalyTimeline",
+      title: "📍 Interactive Anomaly Timeline",
+      desc: "Timeline view of all anomalies across metrics with severity filters.",
     },
     
     
@@ -518,6 +524,10 @@ const Forecast: React.FC = () => {
               📊 Root Cause Confidence Scoring
             </h3>
             <RootCauseConfidenceTable entries={scoredRootCauses} />
+          </div>
+        ) : selectedChart === "anomalyTimeline" ? (
+          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
+            <AnomalyTimeline insights={memoizedInsights} />
           </div>
         ) : selectedChart === "trendEvolution" ? (
           <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
