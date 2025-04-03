@@ -26,7 +26,8 @@ import AlertPriorityTable from "../components/AlertPriorityTable";
 import ClusterPCAPlot from "../components/ClusterPCAPlot";
 import { get2DClusterData } from "../utils/pcaUtils";
 import TrendEvolutionTabs from "../components/TrendEvolutionTabs";
-import { computeWeeklyTrends } from "../utils/trendEvolution"; 
+import { scoreRootCauses } from "../utils/rootCauseConfidence";
+import RootCauseConfidenceTable from "../components/RootCauseConfidenceTable";
 
 interface SensorRow {
   timestamp: string;
@@ -202,6 +203,11 @@ const Forecast: React.FC = () => {
       title: "📆 Trend Evolution Charts",
       desc: "Track weekly trends in sensor metrics.",
     },
+    {
+      id: "showRootConfidence",
+      title: "📊 Root Cause Confidence Scoring",
+      desc: "Confidence scores for root causes based on detected anomalies.",
+    },
     
     
   ];
@@ -322,7 +328,10 @@ const Forecast: React.FC = () => {
     console.log("Generated Suggested Actions:", actions); // Debugging log
     return actions || []; // Ensure actions is always an array
   }, [memoizedInsights]);
-
+  
+  const scoredRootCauses = useMemo(() => {
+    return scoreRootCauses(rootCauses);
+  }, [rootCauses]);
   const healthScore = useMemo(
     () => calculateHealthScore(memoizedInsights),
     [memoizedInsights]
@@ -502,6 +511,13 @@ const Forecast: React.FC = () => {
                 ⚠️ Low health score detected! Immediate attention required.
               </p>
             )}
+          </div>
+        ) : selectedChart === "showRootConfidence" ? (
+          <div className="bg-white mt-4 p-4 rounded-xl shadow-lg">
+            <h3 className="text-xl font-semibold text-purple-700 mb-2">
+              📊 Root Cause Confidence Scoring
+            </h3>
+            <RootCauseConfidenceTable entries={scoredRootCauses} />
           </div>
         ) : selectedChart === "trendEvolution" ? (
           <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
