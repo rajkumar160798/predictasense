@@ -1,4 +1,4 @@
-// filepath: /Users/rajkumarmyakala/predictasense/frontend/src/pages/Settings.tsx
+// filepath: /Users/rajkumarmyakala/ProvansIQ/frontend/src/pages/Settings.tsx
 import React from "react";
 
 const Settings: React.FC = () => {

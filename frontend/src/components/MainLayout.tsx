@@ -18,7 +18,7 @@
 //       <aside className="w-64 bg-[#7663d5] p-6 space-y-6 text-white sticky top-0 h-screen hidden md:block">
 //         <div className="flex items-center space-x-2">
 //           <img src={logo} alt="logo" className="w-10 h-10 object-contain" />
-//           <h1 className="text-xl font-bold">PredictAsense</h1>
+//           <h1 className="text-xl font-bold">ProvansIQ</h1>
 //         </div>
 //         <nav className="flex flex-col space-y-4 mt-8">
 //           <NavLink to="/dashboard" className="hover:font-semibold" end>Dashboard</NavLink>
@@ -57,7 +57,7 @@ const MainLayout: React.FC = () => {
       <aside className="w-64 bg-purple-600 text-black p-4">
         <div className="flex items-center mb-6">
           <img src={logo} alt="logo" className="w-10 h-10 mr-2" />
-          <span className="text-2xl font-bold">PredictAsense</span>
+          <span className="text-2xl font-bold">ProvansIQ</span>
         </div>
         <nav className="flex flex-col gap-4">
           <NavLink to="/dashboard" className="hover:font-semibold">Dashboard</NavLink>

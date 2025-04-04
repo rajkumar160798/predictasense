@@ -42,7 +42,7 @@ const Sidebar: React.FC = () => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out z-40 shadow-2xl border-r border-purple-500`}
       >
-        <div className="p-6 pt-20 border-b border-purple-200 font-bold text-xl">PredictAsense</div>
+        <div className="p-6 pt-20 border-b border-purple-200 font-bold text-xl">ProvansIQ</div>
         <nav className="flex flex-col gap-4 p-6 text-base">
           {menuItems.map((item) => (
             <Link

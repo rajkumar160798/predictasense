@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/machine-background.jpg";
 import 'animate.css';
+import NutIcon from '../assets/nut-svgrepo-com.svg';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,7 +32,15 @@ const LandingPage: React.FC = () => {
             textShadow: "4px 4px 10px rgba(0, 0, 0, 0.4)",
           }}
         >
-          <span className="text-white mr-3">predict</span>
+          <span className="text-white mr-3">
+            Pr
+            <img
+              src={NutIcon}
+              alt="nut icon"
+              className="inline w-23 h-23 mx-[2px]"
+            />
+            vans
+          </span>
           <span
             className="text-transparent"
             style={{
@@ -39,7 +48,7 @@ const LandingPage: React.FC = () => {
               fontFamily: "serif",
             }}
           >
-            Asesnse
+            IQ
           </span>
           <span
             className="text-white text-[1.5vw] font-extrabold ml-2"
@@ -50,8 +59,9 @@ const LandingPage: React.FC = () => {
         </h1>
         {/* Tagline */}
         <h2 className="text-2xl md:text-3xl text-purple-100 font-medium max-w-3xl text-center">
-            Smart AI-powered predictive maintenance that forecasts<br />
-            trends and detects anomalies from your sensor data.
+          Smart AI-powered predictive maintenance that forecasts
+          <br />
+          trends and detects anomalies from your sensor data.
         </h2>
 
         {/* Designer Credit - Bigger */}

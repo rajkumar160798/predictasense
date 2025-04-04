@@ -1,6 +1,6 @@
-# 🧠 PredictAsense
+# ProvansIQ
 
-**PredictAsense** is an AI-powered predictive maintenance platform tailored for **industrial IoT**. It helps engineers and analysts **detect anomalies**, **visualize sensor trends**, and **receive real-time alerts** to prevent costly equipment failures.
+**ProvansIQ** is an AI-powered predictive maintenance platform tailored for **industrial IoT**. It helps engineers and analysts **detect anomalies**, **visualize sensor trends**, and **receive real-time alerts** to prevent costly equipment failures.
 
 > 🎯 Built for smart factories, manufacturing plants, and industrial automation.
 

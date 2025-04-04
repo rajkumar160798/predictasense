@@ -29,16 +29,16 @@ const About: React.FC = () => {
 
 
         {/* Title */}
-        <h1 className="text-5xl font-bold">About PredictAsense</h1>
+        <h1 className="text-5xl font-bold">About ProvansIQ</h1>
 
         {/* Intro */}
-        <p><strong>PredictAsense™</strong> is a smart AI-powered predictive maintenance platform designed to analyze sensor data, forecast equipment failures, and recommend preventive actions. It helps industries save costs, prevent downtime, and operate more efficiently using data-driven insights.</p>
+        <p><strong>ProvansIQ™</strong> is a smart AI-powered predictive maintenance platform designed to analyze sensor data, forecast equipment failures, and recommend preventive actions. It helps industries save costs, prevent downtime, and operate more efficiently using data-driven insights.</p>
         
         <p>
           Developed by <strong>Raj Kumar Myakala</strong>, this tool combines cutting-edge data science techniques with a beautiful, intuitive dashboard for visualizing trends, anomalies, and actionable insights.
         </p>
 
-        <p className="text-lg text-left font-bold mb-6">PredictAsense stands apart from other tools by offering features like:</p>
+        <p className="text-lg text-left font-bold mb-6">ProvansIQ stands apart from other tools by offering features like:</p>
 
         <ul className="list-disc text-left text-lg pl-6 mb-6">
           <li>📈 Real-time forecasting of temperature, pressure, and vibration</li>
@@ -50,7 +50,7 @@ const About: React.FC = () => {
 
         {/* Mission */}
         <p>
-          Whether you're managing a factory floor or optimizing a mechanical system, <strong>PredictAsense</strong> empowers you to make proactive decisions using intelligent insights.
+          Whether you're managing a factory floor or optimizing a mechanical system, <strong>ProvansIQ</strong> empowers you to make proactive decisions using intelligent insights.
         </p>
         <p className="text-pink-600 font-medium">
           🎯 Mission: Bring accessible predictive maintenance to everyone, powered by open-source and innovation.
@@ -98,7 +98,7 @@ const About: React.FC = () => {
         <div className="mt-10">
           <h2 className="text-2xl font-bold text-left">💬 Testimonials</h2>
           <div className="mt-4 italic text-gray-700 text-left">
-            “PredictAsense saved us 3 hours of weekly maintenance!”<br />
+             ProvansIQ saved us 3 hours of weekly maintenance!”<br />
             – SmartTech Inc.
           </div>
         </div>
