@@ -13,6 +13,12 @@ body, html, #root {
   background-color: #f9fafb;
 }
 
+/* Add in your global css/tailwind config */
+.title-glow:hover {
+  text-shadow: 0 0 12px #ffffffaa;
+}
+
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

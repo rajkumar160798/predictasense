@@ -54,7 +54,7 @@ const MainLayout: React.FC = () => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-purple-600 text-white p-4">
+      <aside className="w-64 bg-purple-600 text-black p-4">
         <div className="flex items-center mb-6">
           <img src={logo} alt="logo" className="w-10 h-10 mr-2" />
           <span className="text-2xl font-bold">PredictAsense</span>

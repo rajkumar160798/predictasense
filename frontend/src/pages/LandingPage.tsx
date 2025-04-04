@@ -1,8 +1,8 @@
 // src/pages/LandingPage.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.jpeg";
-import backgroundImage from "../assets/machine-background.jpg"; // Add the provided image to your assets folder
+import backgroundImage from "../assets/machine-background.jpg";
+import 'animate.css';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,24 +20,58 @@ const LandingPage: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
 
       {/* Content */}
-      <div className="z-10 flex flex-col items-center space-y-6">
-        <img src={logo} alt="logo" className="w-28 h-28 rounded-full shadow-lg" />
-        <h1 className="text-20xl font-extrabold text-white">PredictAsense</h1>
-        <p className="text-2xl text-white max-w-2xl">
-          Smart AI-powered predictive maintenance tool that forecasts trends and detects anomalies from your sensor data.
-        </p>
-        <h2 className="text-2xl text-white max-w-4xl">
-          Designed by Raj Kumar Myakala
+      <div className="z-10 flex flex-col items-center space-y-8">
+        {/* Title */}
+        <h1
+          className="title-glow font-extrabold tracking-wide flex flex-wrap justify-center leading-none text-white animate-fadeIn animate__animated "
+          style={{
+            fontSize: "8vw",
+            lineHeight: 1.1,
+            fontFamily: "Inter, sans-serif",
+            textShadow: "4px 4px 10px rgba(0, 0, 0, 0.4)",
+          }}
+        >
+          <span className="text-white mr-3">predict</span>
+          <span
+            className="text-transparent"
+            style={{
+              WebkitTextStroke: "0.15vw white",
+              fontFamily: "serif",
+            }}
+          >
+            Asesnse
+          </span>
+          <span
+            className="text-white text-[1.5vw] font-extrabold ml-2"
+            style={{ position: "relative", top: "1.0vw" }}
+          >
+            ™
+          </span>
+        </h1>
+        {/* Tagline */}
+        <h2 className="text-2xl md:text-3xl text-purple-100 font-medium max-w-3xl text-center">
+            Smart AI-powered predictive maintenance that forecasts<br />
+            trends and detects anomalies from your sensor data.
         </h2>
+
+        {/* Designer Credit - Bigger */}
+        <h3 className="text-xl md:text-2xl font-medium text-white mt-2 animate-fadeIn">
+          Designed by{" "}
+          <span className="font-semibold text-purple-200">
+            Raj Kumar Myakala
+          </span>
+        </h3>
+
+        {/* CTA */}
         <button
           onClick={() => navigate("/upload")}
-          className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-10 py-4 rounded-full text-xl shadow-md hover:scale-105 transition-transform"
+          className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-20 py-8 rounded-full text-xl shadow-md hover:scale-105 transition-transform"
         >
-          Get Started
+          🚀 Get Started
         </button>
       </div>
 
-      {/* Background Image Layer */}
+      {/* Background Filter Layer */}
       <img
         src={backgroundImage}
         alt="bg"

@@ -15,7 +15,7 @@ const HealthScoreCard: React.FC<Props> = ({ score }) => {
   return (
     <div className="p-6 bg-white rounded-xl shadow-md text-center">
       <h2 className="text-xl font-semibold text-purple-700 mb-2">🏥 System Health Score</h2>
-      <div className={`text-white text-5xl font-bold p-6 rounded-full w-36 h-36 mx-auto flex items-center justify-center ${getColor(score)}`}>
+      <div className={`text-black text-5xl font-bold p-6 rounded-full w-36 h-36 mx-auto flex items-center justify-center ${getColor(score)}`}>
         {score}
       </div>
       <p className="mt-2 text-gray-600">Based on recent anomaly trends</p>
