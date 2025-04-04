@@ -8,6 +8,7 @@ import MainLayout from "./components/MainLayout";
 import Home from "./pages/Home";
 import Upload from "./pages/Upload"; 
 import Forecast from "./pages/Forecast"; 
+import About from "./pages/About"; // Import the new About page
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/forecast" element={<Forecast />} />
         <Route path="/anomalies" element={<Anomalies />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/about" element={<About/>} />
 
         {/* 🔸 Pages with sidebar layout */}
         <Route element={<MainLayout />}>

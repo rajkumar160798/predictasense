@@ -30,6 +30,7 @@ import TrendEvolutionTabs from "../components/TrendEvolutionTabs";
 import { scoreRootCauses } from "../utils/rootCauseConfidence";
 import RootCauseConfidenceTable from "../components/RootCauseConfidenceTable";
 import AnomalyTimeline from "../components/AnomalyTimeline";
+import Sidebar from "../components/Sidebar";
 
 interface SensorRow {
   timestamp: string;
@@ -385,6 +386,8 @@ const Forecast: React.FC = () => {
         backgroundBlendMode: "overlay",
       }}
     >
+          {/*Sidebar */}
+           <Sidebar />
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
 

@@ -4,6 +4,7 @@ import Papa from "papaparse";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import backgroundImage from "../assets/machine-background.jpg"; // Add the same background image
+import Sidebar from "../components/Sidebar";
 
 interface SensorRow {
   timestamp: string;
@@ -74,6 +75,9 @@ const Upload: React.FC = () => {
         backgroundPosition: "center",
       }}
     >
+          {/*Sidebar */}
+          <Sidebar />
+          
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
 
