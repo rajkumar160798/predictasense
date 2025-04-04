@@ -29,7 +29,7 @@ const About: React.FC = () => {
 
 
         {/* Title */}
-        <h1 className="text-4xl font-bold">About PredictAsense</h1>
+        <h1 className="text-5xl font-bold">About PredictAsense</h1>
 
         {/* Intro */}
         <p><strong>PredictAsense™</strong> is a smart AI-powered predictive maintenance platform designed to analyze sensor data, forecast equipment failures, and recommend preventive actions. It helps industries save costs, prevent downtime, and operate more efficiently using data-driven insights.</p>
@@ -38,7 +38,7 @@ const About: React.FC = () => {
           Developed by <strong>Raj Kumar Myakala</strong>, this tool combines cutting-edge data science techniques with a beautiful, intuitive dashboard for visualizing trends, anomalies, and actionable insights.
         </p>
 
-        <p className="text-lg mb-6">PredictAsense stands apart from other tools by offering features like:</p>
+        <p className="text-lg text-left font-bold mb-6">PredictAsense stands apart from other tools by offering features like:</p>
 
         <ul className="list-disc text-left text-lg pl-6 mb-6">
           <li>📈 Real-time forecasting of temperature, pressure, and vibration</li>
@@ -62,7 +62,7 @@ const About: React.FC = () => {
           <img
             src={myPic}
             alt="Raj Kumar Myakala"
-            className="w-32 h-32 rounded-full mx-auto border-4 border-purple-600 shadow-lg"
+            className="w-32 h-32 rounded-full font-bold  mx-auto border-4 border-purple-600 shadow-lg"
           />
           <p>Raj Kumar Myakala is a passionate developer and data enthusiast, committed to building AI solutions that solve real-world problems.</p>
           <div className="flex justify-center space-x-6">
@@ -74,7 +74,7 @@ const About: React.FC = () => {
 
         {/* Timeline Section */}
         <div className="mt-10 space-y-2 text-left">
-          <h2 className="text-2xl font-bold text-center">🗓️ Development Timeline</h2>
+          <h2 className="text-2xl font-bold text-left">🗓️ Development Timeline</h2>
           <ul className="list-disc list-inside">
             <li>✅ <strong>Feb 2024</strong> – Idea inception</li>
             <li>🧪 <strong>Mar 2024</strong> – MVP with anomaly heatmaps</li>
@@ -85,7 +85,7 @@ const About: React.FC = () => {
 
         {/* What's Next */}
         <div className="mt-10 space-y-2 text-left">
-          <h2 className="text-2xl font-bold text-center">🔮 What’s Next?</h2>
+          <h2 className="text-2xl font-bold text-left">🔮 What’s Next?</h2>
           <ul className="list-disc list-inside">
             <li>🔗 Slack/Teams integration</li>
             <li>⚡ Real-time streaming sensor data</li>
@@ -96,8 +96,8 @@ const About: React.FC = () => {
 
         {/* Testimonials */}
         <div className="mt-10">
-          <h2 className="text-2xl font-bold text-center">💬 Testimonials</h2>
-          <div className="mt-4 italic text-gray-700">
+          <h2 className="text-2xl font-bold text-left">💬 Testimonials</h2>
+          <div className="mt-4 italic text-gray-700 text-left">
             “PredictAsense saved us 3 hours of weekly maintenance!”<br />
             – SmartTech Inc.
           </div>
