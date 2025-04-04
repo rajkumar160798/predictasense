@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import backgroundImage from "../assets/machine-background.jpg";
-import myPic from "../assets/my_pic.png";
+import myPic from "../assets/my_pic_2.png";
 
 const About: React.FC = () => {
   return (
