@@ -26,9 +26,9 @@ const RootCauseConfidenceTable: React.FC<Props> = ({ entries }) => {
       <tbody>
         {entries.map((row, idx) => (
           <tr key={idx} className="border-b border-gray-200">
-            <td className="p-2">{row.metric}</td>
-            <td className="p-2">{row.severity}</td>
-            <td className="p-2">{row.time}</td>
+            <td className="p-2 px-4 text-gray-800">{row.metric}</td>
+            <td className="p-2 px-4 text-gray-800">{row.severity}</td>
+            <td className="p-2 px-4 text-gray-800">{row.time}</td>
             <td
               className={`p-2 font-bold ${
                 row.confidence > 0.75

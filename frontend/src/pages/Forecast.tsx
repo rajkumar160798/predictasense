@@ -505,7 +505,7 @@ const Forecast: React.FC = () => {
             )}
           </div>
         ) : selectedChart === "clusterVisualization" ? (
-          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">
               🧬 Cluster Visualization (PCA)
             </h2>
@@ -524,18 +524,18 @@ const Forecast: React.FC = () => {
             )}
           </div>
         ) : selectedChart === "showRootConfidence" ? (
-          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[400px] overflow-y-auto">
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
             <h3 className="text-xl font-semibold text-purple-700 mb-2">
               📊 Root Cause Confidence Scoring
             </h3>
             <RootCauseConfidenceTable entries={scoredRootCauses} />
           </div>
         ) : selectedChart === "anomalyTimeline" ? (
-          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
             <AnomalyTimeline insights={memoizedInsights} />
           </div>
         ) : selectedChart === "trendEvolution" ? (
-          <div className="bg-white p-4 rounded-xl shadow-lg max-h-[500px] overflow-y-auto">
+          <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">📆 Weekly Trend Evolution</h2>
             <TrendEvolutionTabs data={filteredData} />
           </div>

@@ -30,16 +30,17 @@ const TrendEvolutionTabs: React.FC<Props> = ({ data }) => {
   return (
     <div>
       {/* Tab Buttons */}
-      <div className="flex justify-center gap-4 mb-4">
+      <div className="flex justify-center gap-4 mb-4 bg-white p-4 rounded-xl shadow-lg">
         {["temperature", "vibration", "pressure"].map((metric) => (
           <button
             key={metric}
             onClick={() => setActiveTab(metric as any)}
-            className={`px-4 py-2 rounded-full  text-gray-500 font-medium ${
-              activeTab === metric
-                ? "bg-purple-700"
-                : "bg-purple-400 hover:bg-purple-600"
-            }`}
+            className={`px-5 py-2 rounded-full border font-semibold transition duration-200
+        ${
+          activeTab === metric
+            ? "bg-purple-100 text-purple-800 border-purple-700 shadow-md !bg-white"
+            : "bg-white text-purple-600 border-gray-300 hover:bg-purple-50 hover:border-purple-600 !bg-white"
+        }`}
           >
             {metric === "temperature" && "🌡️ Temperature"}
             {metric === "vibration" && "🎛️ Vibration"}
@@ -49,7 +50,7 @@ const TrendEvolutionTabs: React.FC<Props> = ({ data }) => {
       </div>
 
       {/* Trend Chart */}
-      <div className="h-[400px] bg-white p-4 rounded-xl shadow-lg">
+      <div className="h-[400px] bg-white p-4 rounded-xl shadow-lg !bg-whte">
         <ResponsiveLine
           data={getChartData()}
           margin={{ top: 50, right: 60, bottom: 100, left: 60 }}
@@ -62,7 +63,9 @@ const TrendEvolutionTabs: React.FC<Props> = ({ data }) => {
             legendOffset: 40,
           }}
           axisLeft={{
-            legend: `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Value`,
+            legend: `${
+              activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
+            } Value`,
             legendPosition: "middle",
             legendOffset: -50,
           }}

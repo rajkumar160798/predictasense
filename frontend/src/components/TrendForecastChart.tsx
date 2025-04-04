@@ -103,7 +103,7 @@ const TrendForecastChart: React.FC<TrendForecastChartProps> = ({ data, metric })
       };
   
       return (
-        <div className="w-full">
+        <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded shadow mt-6 text-center text-yellow-800 dark:text-yellow-100">
           <Line data={chartData} options={options} />
         </div>
       );
