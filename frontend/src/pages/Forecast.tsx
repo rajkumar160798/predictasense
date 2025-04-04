@@ -31,7 +31,8 @@ import { scoreRootCauses } from "../utils/rootCauseConfidence";
 import RootCauseConfidenceTable from "../components/RootCauseConfidenceTable";
 import AnomalyTimeline from "../components/AnomalyTimeline";
 import Sidebar from "../components/Sidebar";
-import CommentsPanel from "../components/CommentsPanel"; 
+import CommentsPanel from "../components/CommentsPanel";
+import LiveMonitor from "../pages/LiveMonitor"; 
 
 interface SensorRow {
   timestamp: string;
@@ -223,7 +224,11 @@ const Forecast: React.FC = () => {
       title: "💬 Anomaly Comments",
       desc: "Collaborate on anomalies with feedback threads."
     },
-    
+    {
+      id: "liveMonitor",
+      title: "📡 Live Monitoring Dashboard",
+      desc: "Shows real-time sensor anomalies with metric status.",
+    }
     
   ];
 
@@ -433,8 +438,15 @@ const Forecast: React.FC = () => {
             <div
               key={chart.id}
               onClick={() => {
+                // if (chart.id === "liveMonitor") {
+                //   navigate("/live-monitor"); // ✅ Navigate to Live Monitor route
+                //   return;
+                // }
                 setSelectedChart(chart.id);
                 setShowInsights(chart.id === "anomalyInsights");
+                if (chart.id === "liveMonitor") {
+                  navigate("/live-monitor"); // Navigate to Live Monitor page
+                } 
                 if (chart.id === "autoMLForecast") {
                   // Scroll to chart display section
                   const chartSection = document.getElementById(
