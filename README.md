@@ -71,8 +71,8 @@ predictasense/
 |-------------|------------------------------------------|
 | **Feb 2025** | Idea inception, project scaffold         |
 | **Mar 2025** | MVP: Heatmap + Anomaly Detection         |
-| **Apr 2025** | AutoML forecast + PDF reports            |
-| **May 2025** | Slack alerts, team comments, clustering  |
+| **Mar 2025** | AutoML forecast + PDF reports            |
+| **Apr 2025** | Slack alerts, team comments, clustering  |
 | **Apr 2025** | Firebase deploy + Firestore sync         |
 
 ---
