@@ -9,7 +9,7 @@
 ## 📸 Preview
 
 ### Landing Page
-![Landing Page](./frontend/src/assets/pic.png)
+![Landing Page](./frontend/src/assets/ProvansIQ.png)
 
 ### Upload Page
 ![Uplaod Page](./frontend/src/assets/pic_1.png)
@@ -53,7 +53,7 @@
 ## 📁 Folder Structure
 
 ```bash
-predictasense/
+provansIQ/
 │
 ├── frontend/         # React app with all UI, charts, routing
 ├── backend/          # FastAPI for ML prediction API
