@@ -8,7 +8,7 @@ import Sidebar from "../components/Sidebar";
 import { db } from "../utils/firebase"; 
 import { collection, addDoc } from "firebase/firestore";
 import 'animate.css';
-
+import { sendSlackAlert } from "../utils/sendSlackAlert";
 
 interface SensorRow {
   timestamp: string;
@@ -61,6 +61,16 @@ const Upload: React.FC = () => {
                 severity,
                 confidence,
               });
+              if (severity === "High") {
+                sendSlackAlert({
+                  timestamp: row.timestamp,
+                  temperature: row.temperature,
+                  pressure: row.pressure,
+                  vibration: row.vibration,
+                  severity,
+                  confidence,
+                });
+              }
             }
           } catch (error) {
             console.error("Error uploading to Firestore:", error);
@@ -147,10 +157,9 @@ const Upload: React.FC = () => {
             >
               Continue to Forecast →
             </button>
-          </div>
+          </div>         
         )}
       </div>
-
       {/* Background Image Layer */}
       <img
         src={backgroundImage}
