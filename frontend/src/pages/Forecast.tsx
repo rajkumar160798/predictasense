@@ -32,7 +32,7 @@ import RootCauseConfidenceTable from "../components/RootCauseConfidenceTable";
 import AnomalyTimeline from "../components/AnomalyTimeline";
 import Sidebar from "../components/Sidebar";
 import CommentsPanel from "../components/CommentsPanel";
-import LiveMonitor from "../pages/LiveMonitor"; 
+// import LiveMonitor from "../pages/LiveMonitor"; 
 
 interface SensorRow {
   timestamp: string;
@@ -49,7 +49,7 @@ interface ForecastPoint {
 
 const Forecast: React.FC = () => {
   const [selectedChart, setSelectedChart] = useState("temperature");
-  const [showInsights, setShowInsights] = useState(false);
+  // const [setShowInsights] = useState(false);
   const navigate = useNavigate(); 
 
   const [range, setRange] = useState<Range[]>([
@@ -321,7 +321,7 @@ const Forecast: React.FC = () => {
   };
 
   const heatmapData = getAnomalyHeatmapData();
-  const impactEntries = computeAnomalyImpact(filteredData);
+  // const impactEntries = computeAnomalyImpact(filteredData);
   const impacts = computeAnomalyImpact(filteredData); // For component
   const impactScores = getImpactScorePerMetric(impacts); 
   console.log("Impact Scores:", impactScores); // Debugging log
@@ -443,7 +443,7 @@ const Forecast: React.FC = () => {
                 //   return;
                 // }
                 setSelectedChart(chart.id);
-                setShowInsights(chart.id === "anomalyInsights");
+                // setShowInsights(chart.id === "anomalyInsights");
                 if (chart.id === "liveMonitor") {
                   navigate("/live-monitor"); // Navigate to Live Monitor page
                 } 
@@ -547,7 +547,12 @@ const Forecast: React.FC = () => {
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">
               🧬 Cluster Visualization (PCA)
             </h2>
-            <ClusterPCAPlot points={get2DClusterData(clusteredAnomalies)} />
+            <ClusterPCAPlot
+              points={get2DClusterData(clusteredAnomalies).map((point) => ({
+                ...point,
+                cluster: point.cluster.toString(), // Convert cluster to string
+              }))}
+            />
           </div>
         ) : selectedChart === "comments" ? (
           <div className="mt-10 bg-white p-4 rounded-xl shadow-lg">
@@ -700,7 +705,7 @@ const Forecast: React.FC = () => {
                   colors={{ scheme: "category10" }}
                   pointSize={8}
                   pointBorderWidth={2}
-                  pointColor={(d) => (d.data.failure_risk ? "red" : d.color)} // Red for risk points
+                  pointColor={(d: any) => (d.data.failure_risk ? "red" : d.color)}
                   tooltip={({ point }) => {
                     const dataPoint = point.data as {
                       xFormatted: string | number;

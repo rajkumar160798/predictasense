@@ -19,7 +19,7 @@ export const clusterAnomalies = (data: SensorRow[]) => {
 
   try {
     // Perform k-means clustering with 3 clusters
-    const clusters = kmeans(inputData, 3);
+    const clusters = kmeans(inputData, 3, {});
 
     console.log("Clustering Result:", clusters);
 

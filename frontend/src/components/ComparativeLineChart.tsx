@@ -30,21 +30,21 @@ const colorMap: Record<string, string> = {
   pressure: 'blue',
 };
 
-const getYAxisTitle = (metrics: string[]): string => {
-  if (metrics.length === 1) {
-    switch (metrics[0]) {
-      case 'temperature':
-        return 'Temperature (°C)';
-      case 'vibration':
-        return 'Vibration';
-      case 'pressure':
-        return 'Pressure (kPa)';
-      default:
-        return 'Sensor Value';
-    }
-  }
-  return 'Sensor Values';
-};
+// const getYAxisTitle = (metrics: string[]): string => {
+//   if (metrics.length === 1) {
+//     switch (metrics[0]) {
+//       case 'temperature':
+//         return 'Temperature (°C)';
+//       case 'vibration':
+//         return 'Vibration';
+//       case 'pressure':
+//         return 'Pressure (kPa)';
+//       default:
+//         return 'Sensor Value';
+//     }
+//   }
+//   return 'Sensor Values';
+// };
 
 const ComparativeLineChart: React.FC<Props> = ({ data, selectedMetrics }) => {
   if (!data || data.length === 0 || selectedMetrics.length === 0) {
