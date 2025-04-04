@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "animate.css": "^4.1.1",
+    "firebase": "^11.6.0",
     "ml-pca": "^4.1.1",
     "plotly.js": "^3.0.1",
     "react-icons": "^5.5.0",

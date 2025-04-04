@@ -3,8 +3,12 @@ import React, { useState } from "react";
 import Papa from "papaparse";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
-import backgroundImage from "../assets/machine-background.jpg"; // Add the same background image
+import backgroundImage from "../assets/machine-background.jpg"; 
 import Sidebar from "../components/Sidebar";
+import { db } from "../utils/firebase"; 
+import { collection, addDoc } from "firebase/firestore";
+import 'animate.css';
+
 
 interface SensorRow {
   timestamp: string;
@@ -43,6 +47,27 @@ const Upload: React.FC = () => {
         setData(parsed);
         localStorage.setItem("sensorData", JSON.stringify(parsed));
 
+        parsed.forEach(async (row) => {
+          try {
+            if (row.temperature > 80 || row.vibration > 0.07 || row.pressure > 1015) {
+              const severity = row.temperature > 90 ? "High" : "Moderate";
+              const confidence = 0.9; // You can calculate this based on rules if needed
+        
+              await addDoc(collection(db, "anomalies"), {
+                timestamp: row.timestamp,
+                temperature: row.temperature,
+                vibration: row.vibration,
+                pressure: row.pressure,
+                severity,
+                confidence,
+              });
+            }
+          } catch (error) {
+            console.error("Error uploading to Firestore:", error);
+          }
+        });
+        console.log("Synced anomalies to Firestore.");
+
         const heatmapData: AnomalyHeatmapData = {};
         parsed.forEach((row) => {
           const hour = format(parseISO(row.timestamp), "MM-dd HH:00");
@@ -77,7 +102,7 @@ const Upload: React.FC = () => {
     >
           {/*Sidebar */}
           <Sidebar />
-          
+
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
 

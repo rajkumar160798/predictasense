@@ -31,6 +31,7 @@ import { scoreRootCauses } from "../utils/rootCauseConfidence";
 import RootCauseConfidenceTable from "../components/RootCauseConfidenceTable";
 import AnomalyTimeline from "../components/AnomalyTimeline";
 import Sidebar from "../components/Sidebar";
+import CommentsPanel from "../components/CommentsPanel"; 
 
 interface SensorRow {
   timestamp: string;
@@ -217,6 +218,11 @@ const Forecast: React.FC = () => {
       title: "📍 Interactive Anomaly Timeline",
       desc: "Timeline view of all anomalies across metrics with severity filters.",
     },
+    {
+      id: "comments",
+      title: "💬 Anomaly Comments",
+      desc: "Collaborate on anomalies with feedback threads."
+    },
     
     
   ];
@@ -360,6 +366,22 @@ const Forecast: React.FC = () => {
       });
   
       const clustered = clusterAnomalies(anomalies);
+      // const ForecastPage = () => {
+      //   const anomalies = useAnomaliesListener();
+      
+      //   return (
+      //     <div>
+      //       <h2 className="text-2xl font-bold mb-4">📊 Live Anomalies</h2>
+      //       <ul>
+      //         {anomalies.map((item) => (
+      //           <li key={item.id} className="mb-2">
+      //             <strong>{item.severity}</strong> at {item.timestamp} — Temp: {item.temperature}°C | Vib: {item.vibration} | Pressure: {item.pressure}
+      //           </li>
+      //         ))}
+      //       </ul>
+      //     </div>
+      //   );
+      // };
   
       const enriched = clustered.map((item, idx) => ({
         ...item,
@@ -450,6 +472,7 @@ const Forecast: React.FC = () => {
               🔍 Anomaly Insights
             </h2>
             <AnomalyInsightsSection anomalies={memoizedInsights} />
+            <CommentsPanel anomalyId="4CITKCNtYKWuFaPEdJpI" /> {/* Replace with dynamic ID later */}
           </div>
         ) : selectedChart === "suggestedActions" ? (
           <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
@@ -514,7 +537,16 @@ const Forecast: React.FC = () => {
             </h2>
             <ClusterPCAPlot points={get2DClusterData(clusteredAnomalies)} />
           </div>
-        ) : selectedChart === "healthScore" ? (
+        ) : selectedChart === "comments" ? (
+          <div className="mt-10 bg-white p-4 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-purple-700 mb-4">
+              💬 Comments Panel
+            </h2>
+            {/* Provide a static docId for now, later make it dynamic */}
+            <CommentsPanel anomalyId="sampleDocIdHere" />
+          </div>
+        
+      ):selectedChart === "healthScore" ? (
           <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
             <h2 className="text-2xl font-semibold text-purple-700 mb-4">
               Health Score
