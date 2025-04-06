@@ -4,7 +4,7 @@ module.exports = {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class', // Enable dark mode
+  darkMode: 'class', // Enables dark mode with class strategy
   theme: {
     extend: {
       colors: {
@@ -18,6 +18,6 @@ module.exports = {
         sans: ['Inter', 'sans-serif'],
       },
     },
-  },   
+  },
   plugins: [],
 };

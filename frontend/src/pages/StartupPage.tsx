@@ -6,7 +6,7 @@ import { Shield, Zap, Database, BarChart3, Brain, Cpu, Star, Sun, Moon, Github, 
 import CountUp from 'react-countup';
 import { useTheme } from '../context/ThemeContext';
 
-export default function LandingPage() {
+export default function StartupPage() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
@@ -108,7 +108,7 @@ export default function LandingPage() {
               className="flex gap-4 justify-center"
             >
               <button 
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/upload')}
                 className="px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all transform hover:scale-105"
               >
                 Try Demo

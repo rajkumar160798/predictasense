@@ -1,16 +1,19 @@
 {
   "dependencies": {
     "animate.css": "^4.1.1",
+    "aos": "^2.3.4",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "firebase": "^11.6.0",
     "ml-pca": "^4.1.1",
     "plotly.js": "^3.0.1",
+    "react-countup": "^6.5.3",
     "react-icons": "^5.5.0",
     "react-plotly.js": "^2.6.0",
     "vis-timeline": "^7.7.3"
   },
   "devDependencies": {
+    "@types/aos": "^3.0.7",
     "@types/react-plotly.js": "^2.6.3",
     "vite": "^6.2.5"
   },

@@ -1,109 +1,198 @@
 // src/pages/Dashboard.tsx
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { Brain, AlertTriangle, Bell, Search, BarChart, Settings, Upload, ArrowRight, Heart, KeyRoundIcon, PersonStanding } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
+import Health from './Health';
 
-const cards = [
-  {
-    title: "Forecast",
-    description: "View predicted trends & failure risks.",
-    link: "/forecast",
-    emoji: "📈",
-    bg: "rgba(128, 90, 213, 0.15)", // light purple
-  },
-  {
-    title: "Anomalies",
-    description: "See detected issues from sensor data.",
-    link: "/anomalies",
-    emoji: "🚨",
-    bg: "rgba(239, 68, 68, 0.15)", // light red
-  },
-  {
-    title: "Root Causes",
-    description: "Analyze possible failure reasons.",
-    link: "/root-causes",
-    emoji: "🔎",
-    bg: "rgba(253, 224, 71, 0.2)", // light yellow
-  },
-  {
-    title: "Suggested Actions",
-    description: "Get repair suggestions for anomalies.",
-    link: "/actions",
-    emoji: "🛠️",
-    bg: "rgba(96, 165, 250, 0.15)", // light blue
-  },
-  {
-    title: "Smart Alerts",
-    description: "Get alerts for anomalies.",
-    link: "/alerts",
-    emoji: "🚨",
-    bg: "rgba(185, 186, 150, 0.15)", // light blue
-  },
-  {
-    title: "Health",
-    description: "View system health score.",
-    link: "/health",
-    emoji: "🏥",
-    bg: "rgba(185, 186, 150, 0.15)", // light blue
-  },
-  {
-    title: "Upload New File",
-    description: "Submit new sensor data for analysis.",
-    link: "/upload",
-    emoji: "📤",
-    bg: "rgba(35, 246, 150, 0.15)", // light blue
-  },
-  {
-    title: "about",
-    description: "learn more about provansIQ",
-    link: "/about",
-    emoji: "ℹ️",
-    bg: "rgba(145, 346, 240, 0.15)", // light blue
-  },
-];
 
-const Dashboard: React.FC = () => {
+export default function DashboardPage() {
+  const [isUploaded, setIsUploaded] = useState(() => {
+    // Check if there's sensor data in localStorage
+    const sensorData = localStorage.getItem("sensorData");
+    return sensorData !== null && JSON.parse(sensorData).length > 0;
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  const dashboardButtons = [
+    { icon: Brain, label: 'AI Forecast Predictions', color: 'from-blue-400 to-indigo-600', route: '/forecast' },
+    { icon: AlertTriangle, label: 'Anomaly Detection', color: 'from-red-400 to-pink-600', route: '/anomalies' },
+    { icon: Bell, label: 'Root Causes Analysis', color: 'from-yellow-400 to-orange-600', route: '/root-causes' },
+    { icon: Search, label: 'Suggested Actions', color: 'from-green-400 to-emerald-600', route: '/actions' },
+    { icon: BarChart, label: 'Smart Alerts', color: 'from-purple-400 to-violet-600', route: '/alerts' },
+    { icon: Heart, label: 'System Health', color: 'from-red-400 to-orange-600', route: '/Health' },
+    { icon: Upload, label: 'Upload New Data', color: 'from-pink-400 to-red-600', route: '/upload' },
+    { icon: PersonStanding, label: 'About', color: 'from-purple-500 to-pink-400', route: '/about' },
+  ];
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    handleFiles(files);
+  }, []);
+
+  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    handleFiles(files);
+  }, []);
+
+  const handleFiles = (files: File[]) => {
+    // Redirect to upload page for file handling
+    navigate('/upload');
+  };
+
   return (
-    <div className="min-h-screen bg-white py-12 px-6 md:px-16">
-      {/* Header */}
-      <div className="max-w-5xl mx-auto text-center mb-12">
-        <h1 className="text-4xl font-bold text-purple-800 mb-2">
-          👋 Welcome to ProvansIQ Dashboard
-        </h1>
-        <p className="text-gray-600 text-lg">
-          You can explore predictions, anomalies, reports, and suggestions from
-          your data.
-        </p>
-      </div>
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-12 text-center relative">
+          <button
+            onClick={() => navigate('/')}
+            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm"
+          >
+            <ArrowRight className="w-4 h-4 rotate-180" />
+            Back to Home
+          </button>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Welcome to ProvansIQ Dashboard
+          </h1>
+          <p className="text-gray-600">
+            {!isUploaded ? 'Please upload your data to get started' : 'Explore our AI-powered predictive maintenance features'}
+          </p>
+        </header>
 
-      {/* Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {cards.map((card) => (
-          <Link to={card.link} key={card.title}>
-            <div
-              className="rounded-xl p-6 shadow hover:shadow-lg transition-transform duration-200 hover:scale-105 border border-gray-200"
-              style={{ backgroundColor: card.bg }}
+        <main>
+          {showSuccess && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-md mx-auto mb-8 bg-green-50 border border-green-200 text-green-700 p-4 rounded-lg text-center"
             >
-              <div className="text-4xl mb-3">{card.emoji}</div>
-              <h2 className="text-xl font-semibold text-gray-800">
-                {card.title}
-              </h2>
-              <p className="text-gray-600 text-sm">{card.description}</p>
-            </div>
-          </Link>
-        ))}
+              Redirecting to upload page...
+            </motion.div>
+          )}
+          
+          {!isUploaded ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-2xl mx-auto"
+            >
+              <div
+                className={`
+                  border-2 border-dashed rounded-xl p-12 text-center
+                  ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}
+                  transition-all duration-300 ease-in-out
+                `}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className="p-8 rounded-lg bg-white border border-gray-100 shadow-sm">
+                  <Upload className="w-16 h-16 mx-auto mb-4 text-blue-500" />
+                  <h2 className="text-2xl font-semibold mb-4 text-gray-900">Upload Your Data</h2>
+                  <p className="text-gray-600 mb-6">
+                    Drag and drop your files here, or click to select
+                  </p>
+                  <button
+                    onClick={() => navigate('/upload')}
+                    className="inline-flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all cursor-pointer font-semibold shadow-sm"
+                  >
+                    Upload Data <ArrowRight className="ml-2 w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {dashboardButtons.map((button, index) => {
+                // Define color classes based on button type
+                const getColorClasses = (type: string) => {
+                  switch (type) {
+                    case 'AI Forecast Predictions':
+                      return 'hover:shadow-blue-500/50';
+                    case 'Anomaly Detection':
+                      return 'hover:shadow-red-500/50';
+                    case 'Root Causes Analysis':
+                      return 'hover:shadow-yellow-500/50';
+                    case 'Suggested Actions':
+                      return 'hover:shadow-green-500/50';
+                    case 'Smart Alerts':
+                      return 'hover:shadow-purple-500/50';
+                    case 'System Health':
+                      return 'hover:shadow-pink-500/50';
+                    case 'Upload New Data':
+                      return 'hover:shadow-blue-500/50';
+                    default:
+                      return 'hover:shadow-gray-500/50';
+                  }
+                };
 
-        {/* Generate Report Card */}
-        <div
-          className="rounded-xl p-10 shadow hover:shadow-lg transition-transform duration-200 hover:scale-105 border border-gray-200"
-          style={{ backgroundColor: "rgba(74, 222, 128, 0.15)" }} // light green
-        >
-          {/* PDF Generator Button */}
-          <ForecastPDFGenerator />
-        </div>
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    onClick={() => navigate(button.route)}
+                    className={`
+                      group relative overflow-hidden
+                      p-6 rounded-xl cursor-pointer
+                      bg-white border border-gray-200
+                      hover:border-gray-300
+                      transform hover:scale-[1.02] transition-all duration-300
+                      shadow-sm hover:shadow-xl ${getColorClasses(button.label)}
+                    `}
+                  >
+                    <div className="relative flex flex-col items-center">
+                      <div className="w-16 h-16 mb-4 text-gray-700 transform group-hover:scale-110 transition-transform duration-300">
+                        <button.icon className="w-full h-full" />
+                      </div>
+                      <h2 className="text-xl font-semibold text-center text-gray-900">
+                        {button.label}
+                      </h2>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </main>
+
+        {/* Footer */}
+        <footer className="mt-16 border-t border-gray-100 pt-8 pb-4">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
+            <div className="flex items-center gap-2 mb-4">
+              <Upload className="w-6 h-6 text-blue-500" />
+              <span className="text-gray-900 font-semibold">ProvansIQ</span>
+            </div>
+            <p className="text-gray-600 text-sm text-center">
+              Empowering Industry 4.0 with Advanced Predictive Maintenance
+            </p>
+            <div className="mt-4 flex items-center gap-6">
+              <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Privacy Policy</a>
+              <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Terms of Service</a>
+              <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Contact</a>
+            </div>
+            <p className="mt-6 text-gray-500 text-sm">
+              © 2024 ProvansIQ. All rights reserved.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

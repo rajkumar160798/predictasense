@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/dashboard";
 import Anomalies from "./pages/Anomalies";
@@ -14,32 +15,42 @@ import Rootcauses from "./pages/RootCauses";
 import Actions from "./pages/actions";
 import Alerts from "./pages/alerts";
 import Health from "./pages/Health";
+import RootCause from './pages/RootCause';
+import SuggestedActions from './pages/SuggestedActions';
+import StartupPage from './pages/StartupPage';
+import { ThemeProvider } from './context/ThemeContext';
 
-
-function App() {
+const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        {/* 🔹 Standalone pages without layout */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/upload" element={<Upload />} />
-        <Route path="/forecast" element={<Forecast />} />
-        <Route path="/anomalies" element={<Anomalies />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/live-monitor" element={<LiveMonitor />} />
-        <Route path="/forecast" element={<Forecast />} />
-        <Route path="/root-causes" element={<Rootcauses />} />
-        <Route path="/actions" element={<Actions />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/alerts" element={<Alerts />} />
-        <Route path="/health" element={<Health />} />
-
-        {/* 🔹 Main layout with sidebar */}
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          {/* Landing and Authentication */}
+          <Route path="/" element={<StartupPage />} />
+          <Route path="/landing" element={<LandingPage />} />
+          
+          {/* Main Application Routes */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/upload" element={<Upload />} />
+          <Route path="/forecast" element={<Forecast />} />
+          <Route path="/anomalies" element={<Anomalies />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/live-monitor" element={<LiveMonitor />} />
+          <Route path="/root-causes" element={<Rootcauses />} />
+          <Route path="/actions" element={<Actions />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/health" element={<Health />} />
+          <Route path="/root-cause" element={<RootCause />} />
+          <Route path="/suggested-actions" element={<SuggestedActions />} />
+          
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

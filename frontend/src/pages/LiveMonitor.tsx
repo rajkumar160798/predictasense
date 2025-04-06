@@ -41,10 +41,10 @@ const LiveMonitor: React.FC = () => {
               {/* Back to Upload Page Button */}
       <div className="relative z-10 w-full flex justify-center py-4">
         <button
-          onClick={() => navigate("/forecast")} // Navigate to the Upload page
+          onClick={() => navigate("/dashboard")}
           className="bg-white text-purple-700 px-6 py-3 rounded-full text-lg shadow-md hover:bg-purple-100 hover:shadow-lg transition !bg-white"
         >
-          🔙 Back to Forecast
+          ← Back to Dashboard
         </button>
       </div> 
       </div>

@@ -121,7 +121,7 @@ const Forecast: React.FC = () => {
             onClick={() => navigate("/dashboard")}
             className="bg-white text-purple-700 px-4 py-2 rounded-full shadow hover:bg-purple-100"
           >
-            Dashboard
+            ← Back to Dashboard
           </button>
         </div>
 

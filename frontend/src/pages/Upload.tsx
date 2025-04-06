@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import Papa from "papaparse";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
-import backgroundImage from "../assets/machine-background.jpg"; 
-import Sidebar from "../components/Sidebar";
+import { Upload as UploadIcon, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { db } from "../utils/firebase"; 
 import { collection, addDoc } from "firebase/firestore";
 import 'animate.css';
@@ -27,12 +27,27 @@ interface AnomalyHeatmapData {
 
 const Upload: React.FC = () => {
   const [data, setData] = useState<SensorRow[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const navigate = useNavigate();
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    if (files[0]) handleFileUpload(files[0]);
+  };
+
+  const handleFileUpload = (file: File) => {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
@@ -47,11 +62,12 @@ const Upload: React.FC = () => {
         setData(parsed);
         localStorage.setItem("sensorData", JSON.stringify(parsed));
 
+        // Process anomalies and update Firestore
         parsed.forEach(async (row) => {
           try {
             if (row.temperature > 80 || row.vibration > 0.07 || row.pressure > 1015) {
               const severity = row.temperature > 90 ? "High" : "Moderate";
-              const confidence = 0.9; // You can calculate this based on rules if needed
+              const confidence = 0.9;
         
               await addDoc(collection(db, "anomalies"), {
                 timestamp: row.timestamp,
@@ -76,8 +92,8 @@ const Upload: React.FC = () => {
             console.error("Error uploading to Firestore:", error);
           }
         });
-        console.log("Synced anomalies to Firestore.");
 
+        // Process heatmap data
         const heatmapData: AnomalyHeatmapData = {};
         parsed.forEach((row) => {
           const hour = format(parseISO(row.timestamp), "MM-dd HH:00");
@@ -101,72 +117,133 @@ const Upload: React.FC = () => {
     });
   };
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) handleFileUpload(file);
+  };
+
   return (
-    <div
-      className="relative h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-          {/*Sidebar */}
-          <Sidebar />
-
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
-
-      {/* Content */}
-      <div className="z-10 p-6 max-w-3xl mx-auto">
-        <h1 className="text-5xl font-bold text-white mb-6">Upload Sensor Data</h1>
-
-        <div className="bg-purple-50 border border-purple-300 rounded-lg p-4 mb-10 shadow">
-          <p className="text-gray-700 mb-2">
-            📄 Upload a <strong>.csv</strong> file with the following headers:
-          </p>
-          <ul className="list-disc pl-6 text-gray-600">
-            <li><strong>timestamp</strong> (e.g., 2024-01-01T00:00:00Z)</li>
-            <li><strong>temperature</strong> (in °C)</li>
-            <li><strong>vibration</strong> (in g-force)</li>
-            <li><strong>pressure</strong> (in hPa)</li>
-          </ul>
-        </div>
-
-        <div className="flex flex-col items-center">
-          <label
-            htmlFor="file-upload"
-            className="cursor-pointer bg-white text-purple-700 px-4 py-2 rounded shadow-md hover:bg-purple-400 hover:shadow-lg transition"
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-12 text-center relative">
+          <button
+            onClick={() => navigate('/')}
+            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm"
           >
-            Choose File
-          </label>
-          <input
-            id="file-upload"
-            type="file"
-            accept=".csv"
-            className="hidden"
-            onChange={handleFileUpload}
-          />
+            <ArrowRight className="w-4 h-4 rotate-180" />
+            Back to Home
+          </button>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Upload Your Sensor Data
+          </h1>
+          <p className="text-gray-600">
+            Upload your CSV file to start analyzing your machine's performance
+          </p>
+        </header>
+
+        <main>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-2xl mx-auto"
+          >
+            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8 shadow-sm">
+              <p className="text-gray-700 mb-2 flex items-center gap-2">
+                <span className="text-blue-500">📄</span> Your CSV file should have these headers:
+              </p>
+              <ul className="list-disc pl-6 text-gray-600 space-y-1">
+                <li><strong className="text-gray-900">timestamp</strong> (e.g., 2024-01-01T00:00:00Z)</li>
+                <li><strong className="text-gray-900">temperature</strong> (in °C)</li>
+                <li><strong className="text-gray-900">vibration</strong> (in g-force)</li>
+                <li><strong className="text-gray-900">pressure</strong> (in hPa)</li>
+              </ul>
             </div>
 
-        {data.length > 0 && (
-          <div className="mt-6">
-            <p className="text-2xl font-bold text-green-400 mb-4">✅ File uploaded successfully.</p>
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-10 py-4 rounded-full text-xl shadow-md hover:scale-105 transition-transform"
+            <div
+              className={`
+                border-2 border-dashed rounded-xl p-12 text-center
+                ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}
+                transition-all duration-300 ease-in-out
+              `}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
             >
-              Continue to Dashboard →
-            </button>
-          </div>         
-        )}
+              <div className="p-8 rounded-lg bg-white border border-gray-100 shadow-sm">
+                <UploadIcon className="w-16 h-16 mx-auto mb-4 text-blue-500" />
+                <h2 className="text-2xl font-semibold mb-4 text-gray-900">Upload Your Data</h2>
+                <p className="text-gray-600 mb-6">
+                  Drag and drop your CSV file here, or click to select
+                </p>
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".csv"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="inline-flex items-center px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all cursor-pointer font-semibold shadow-sm"
+                >
+                  Choose File <ArrowRight className="ml-2 w-4 h-4" />
+                </label>
+              </div>
+            </div>
+
+            {data.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8 space-y-4"
+              >
+                <div className="bg-white border border-green-200 p-6 rounded-lg shadow-sm">
+                  <p className="text-2xl font-bold mb-2 text-green-600">✅ File Upload Successful!</p>
+                  <p className="mb-4 text-gray-700">Your sensor data has been processed and is ready for analysis.</p>
+                  <ul className="text-sm space-y-2 text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <span className="text-green-500">✓</span> {data.length} data points processed
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-green-500">✓</span> Anomaly detection complete
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-green-500">✓</span> Heatmap data generated
+                    </li>
+                  </ul>
+                </div>
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="w-full bg-blue-500 text-white px-10 py-4 rounded-xl text-xl shadow-sm hover:shadow-blue-500/50 hover:bg-blue-600 transition-all flex items-center justify-center gap-2 font-semibold"
+                >
+                  Continue to Dashboard <ArrowRight className="w-6 h-6" />
+                </button>
+              </motion.div>
+            )}
+          </motion.div>
+        </main>
+
+        {/* Footer */}
+        <footer className="mt-16 border-t border-gray-100 pt-8 pb-4">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
+            <div className="flex items-center gap-2 mb-4">
+              <UploadIcon className="w-6 h-6 text-blue-500" />
+              <span className="text-gray-900 font-semibold">ProvansIQ</span>
+            </div>
+            <p className="text-gray-600 text-sm text-center">
+              Empowering Industry 4.0 with Advanced Predictive Maintenance
+            </p>
+            <div className="mt-4 flex items-center gap-6">
+              <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Privacy Policy</a>
+              <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Terms of Service</a>
+              <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Contact</a>
+            </div>
+            <p className="mt-6 text-gray-500 text-sm">
+              © 2024 ProvansIQ. All rights reserved.
+            </p>
+          </div>
+        </footer>
       </div>
-      {/* Background Image Layer */}
-      <img
-        src={backgroundImage}
-        alt="bg"
-        className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
-        style={{ filter: "brightness(0.4)" }}
-      />
     </div>
   );
 };
