@@ -2,43 +2,76 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+const cards = [
+  {
+    title: "Forecast",
+    description: "View predicted trends & failure risks.",
+    link: "/forecast",
+    emoji: "📈",
+    bg: "rgba(128, 90, 213, 0.15)", // light purple
+  },
+  {
+    title: "Anomalies",
+    description: "See detected issues from sensor data.",
+    link: "/anomalies",
+    emoji: "🚨",
+    bg: "rgba(239, 68, 68, 0.15)", // light red
+  },
+  {
+    title: "Root Causes",
+    description: "Analyze possible failure reasons.",
+    link: "/root-causes",
+    emoji: "🔎",
+    bg: "rgba(253, 224, 71, 0.2)", // light yellow
+  },
+  {
+    title: "Suggested Actions",
+    description: "Get repair suggestions for anomalies.",
+    link: "/actions",
+    emoji: "🛠️",
+    bg: "rgba(96, 165, 250, 0.15)", // light blue
+  },
+  {
+    title: "Generate Report",
+    description: "Download a PDF summary report.",
+    link: "/reports",
+    emoji: "📄",
+    bg: "rgba(74, 222, 128, 0.15)", // light green
+  },
+];
+
+
+
 const Dashboard: React.FC = () => {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+    <div className="min-h-screen bg-white py-12 px-6 md:px-16">
+      {/* Header */}
+      <div className="max-w-5xl mx-auto text-center mb-12">
+        <h1 className="text-4xl font-bold text-purple-800 mb-2">
+          👋 Welcome to ProvansIQ Dashboard
+        </h1>
+        <p className="text-gray-600 text-lg">
+          You can explore predictions, anomalies, reports, and suggestions from
+          your data.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        <Link to="/upload">
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform">
-            <div className="text-4xl mb-2">⬆️</div>
-            <h2 className="text-xl font-semibold">Upload Data</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">CSV Format</p>
-          </div>
-        </Link>
-
-        <Link to="/anomalies">
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform">
-            <div className="text-4xl mb-2">🚨</div>
-            <h2 className="text-xl font-semibold">Anomalies</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">3 detected</p>
-          </div>
-        </Link>
-
-        <Link to="/forecast">
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform">
-            <div className="text-4xl mb-2">📈</div>
-            <h2 className="text-xl font-semibold">Forecast</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">View trends</p>
-          </div>
-        </Link>
-
-        <Link to="/reports">
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-xl p-6 cursor-pointer hover:scale-105 transition-transform">
-            <div className="text-4xl mb-2">📥</div>
-            <h2 className="text-xl font-semibold">Download Report</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Get summary CSV</p>
-          </div>
-        </Link>
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {cards.map((card) => (
+          <Link to={card.link} key={card.title}>
+            <div
+              className="rounded-xl p-6 shadow hover:shadow-lg transition-transform duration-200 hover:scale-105 border border-gray-200"
+              style={{ backgroundColor: card.bg }}
+            >
+              <div className="text-4xl mb-3">{card.emoji}</div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {card.title}
+              </h2>
+              <p className="text-gray-600 text-sm">{card.description}</p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

@@ -152,10 +152,10 @@ const Upload: React.FC = () => {
           <div className="mt-6">
             <p className="text-2xl font-bold text-green-400 mb-4">✅ File uploaded successfully.</p>
             <button
-              onClick={() => navigate("/forecast")}
+              onClick={() => navigate("/dashboard")}
               className="bg-gradient-to-r from-purple-700 to-purple-900 text-white px-10 py-4 rounded-full text-xl shadow-md hover:scale-105 transition-transform"
             >
-              Continue to Forecast →
+              Continue to Dashboard →
             </button>
           </div>         
         )}
