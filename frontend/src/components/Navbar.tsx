@@ -36,14 +36,14 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="nav-link">Home</Link>
+            {/* <Link to="/" className="nav-link">Home</Link>
             <a href="#features" className="nav-link">Features</a>
             <a href="#why-us" className="nav-link">Why Us</a>
             <a href="#metrics" className="nav-link">Metrics</a>
             <a href="#testimonials" className="nav-link">Testimonials</a>
             <a href="#contact" className="nav-link">Contact</a>
-            
-            <button
+             */}
+            {/* <button
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
@@ -52,14 +52,14 @@ export default function Navbar() {
               ) : (
                 <Moon className="h-5 w-5" />
               )}
-            </button>
+            </button> */}
 
-            <Link
+            {/* <Link
               to="/dashboard"
               className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
             >
               Dashboard
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile Menu Button */}

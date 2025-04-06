@@ -1,6 +1,5 @@
 // src/pages/About.tsx
 import React from "react";
-import backgroundImage from "../assets/machine-background.jpg";
 import myPic from "../assets/my_pic_2.png";
 import { motion } from "framer-motion";
 
