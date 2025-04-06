@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ResponsiveBar } from '@nivo/bar';
 import { ResponsivePie } from '@nivo/pie';
 import CollapsibleSidebar from '../components/CollapsibleSidebar';
+import { motion } from 'framer-motion';
 
 interface Action {
   id: string;
@@ -17,27 +18,27 @@ interface Action {
 const actionOptions = [
   {
     id: "priorityActions",
-    title: "🚨 Priority Actions",
+    title: "\ud83d\udea8 Priority Actions",
     desc: "High-priority maintenance tasks",
-    icon: "🚨"
+    icon: "\ud83d\udea8"
   },
   {
     id: "alertPriority",
-    title: "📊 Alert Prioritization",
+    title: "\ud83d\udcca Alert Prioritization",
     desc: "Ranked list of alerts by severity",
-    icon: "📊"
+    icon: "\ud83d\udcca"
   },
   {
     id: "impactForecast",
-    title: "📈 Impact Forecast",
+    title: "\ud83d\udcc8 Impact Forecast",
     desc: "Predicted impact of anomalies",
-    icon: "📈"
+    icon: "\ud83d\udcc8"
   },
   {
     id: "comments",
-    title: "💬 Team Comments",
+    title: "\ud83d\udcac Team Comments",
     desc: "Collaboration and notes",
-    icon: "💬"
+    icon: "\ud83d\udcac"
   }
 ];
 
@@ -46,7 +47,7 @@ const SuggestedActions: React.FC = () => {
   const navigate = useNavigate();
 
   const actions = useMemo(() => {
-    const mockActions: Action[] = [
+    return [
       {
         id: '1',
         title: 'High Temperature Alert',
@@ -75,44 +76,40 @@ const SuggestedActions: React.FC = () => {
         metric: 'Pressure'
       }
     ];
-    return mockActions;
   }, []);
 
   const renderContent = () => {
     switch (selectedView) {
       case 'priorityActions':
         return (
-          <div className="space-y-4">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <h2 className="text-xl font-bold mb-4">High Priority Actions</h2>
             <div className="grid gap-4">
-              {actions
-                .filter(action => action.severity === 'High')
-                .map(action => (
-                  <div
-                    key={action.id}
-                    className="bg-white p-4 rounded-lg shadow-md border-l-4 border-red-500"
-                  >
-                    <h3 className="font-bold text-lg">{action.title}</h3>
-                    <p className="text-gray-600">{action.description}</p>
-                    <div className="mt-2 flex justify-between items-center">
-                      <span className="text-red-500">Impact: {action.impact}%</span>
-                      <span className="px-2 py-1 rounded bg-red-100 text-red-800">
-                        {action.status}
-                      </span>
-                    </div>
+              {actions.filter(action => action.severity === 'High').map(action => (
+                <motion.div
+                  key={action.id}
+                  className="bg-white p-4 rounded-lg shadow-md border-l-4 border-red-500 hover:shadow-lg transition"
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <h3 className="font-bold text-lg">{action.title}</h3>
+                  <p className="text-gray-600">{action.description}</p>
+                  <div className="mt-2 flex justify-between items-center">
+                    <span className="text-red-500">Impact: {action.impact}%</span>
+                    <span className="px-2 py-1 rounded bg-red-100 text-red-800">
+                      {action.status}
+                    </span>
                   </div>
-                ))}
+                </motion.div>
+              ))}
             </div>
-          </div>
+          </motion.div>
         );
 
       case 'alertPriority':
         const priorityData = actions.map(action => ({
           action: action.title,
-          impact: action.impact,
-          color: action.severity === 'High' ? 'rgb(239, 68, 68)' : 'rgb(249, 115, 22)'
+          impact: action.impact
         }));
-
         return (
           <div className="h-[500px]">
             <ResponsiveBar
@@ -124,69 +121,19 @@ const SuggestedActions: React.FC = () => {
               valueScale={{ type: 'linear' }}
               colors={{ scheme: 'red_yellow_blue' }}
               borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-              axisTop={null}
-              axisRight={null}
-              axisBottom={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: -45,
-                legend: 'Action',
-                legendPosition: 'middle',
-                legendOffset: 40
-              }}
-              axisLeft={{
-                tickSize: 5,
-                tickPadding: 5,
-                tickRotation: 0,
-                legend: 'Impact Score',
-                legendPosition: 'middle',
-                legendOffset: -40
-              }}
-              labelSkipWidth={12}
-              labelSkipHeight={12}
+              axisBottom={{ tickRotation: -45, legend: 'Action', legendOffset: 40 }}
+              axisLeft={{ legend: 'Impact Score', legendOffset: -40 }}
               labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-              legends={[
-                {
-                  dataFrom: 'keys',
-                  anchor: 'bottom-right',
-                  direction: 'column',
-                  justify: false,
-                  translateX: 120,
-                  translateY: 0,
-                  itemsSpacing: 2,
-                  itemWidth: 100,
-                  itemHeight: 20,
-                  itemDirection: 'left-to-right',
-                  itemOpacity: 0.85,
-                  symbolSize: 20
-                }
-              ]}
-            />
+              legends={[{ anchor: 'bottom-right', direction: 'column', translateX: 120, itemWidth: 100, itemHeight: 20 }]} />
           </div>
         );
 
       case 'impactForecast':
         const impactData = [
-          {
-            id: 'High',
-            label: 'High Impact',
-            value: actions.filter(a => a.severity === 'High').length,
-            color: 'rgb(239, 68, 68)'
-          },
-          {
-            id: 'Medium',
-            label: 'Medium Impact',
-            value: actions.filter(a => a.severity === 'Medium').length,
-            color: 'rgb(249, 115, 22)'
-          },
-          {
-            id: 'Low',
-            label: 'Low Impact',
-            value: actions.filter(a => a.severity === 'Low').length,
-            color: 'rgb(234, 179, 8)'
-          }
+          { id: 'High', label: 'High Impact', value: actions.filter(a => a.severity === 'High').length },
+          { id: 'Medium', label: 'Medium Impact', value: actions.filter(a => a.severity === 'Medium').length },
+          { id: 'Low', label: 'Low Impact', value: actions.filter(a => a.severity === 'Low').length }
         ];
-
         return (
           <div className="h-[500px]">
             <ResponsivePie
@@ -195,52 +142,28 @@ const SuggestedActions: React.FC = () => {
               innerRadius={0.5}
               padAngle={0.7}
               cornerRadius={3}
-              activeOuterRadiusOffset={8}
               colors={{ scheme: 'red_yellow_blue' }}
-              borderWidth={1}
               borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
               arcLinkLabelsSkipAngle={10}
               arcLinkLabelsTextColor="#333333"
               arcLinkLabelsThickness={2}
               arcLinkLabelsColor={{ from: 'color' }}
-              arcLabelsSkipAngle={10}
               arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
-              legends={[
-                {
-                  anchor: 'bottom',
-                  direction: 'row',
-                  justify: false,
-                  translateX: 0,
-                  translateY: 56,
-                  itemsSpacing: 0,
-                  itemWidth: 100,
-                  itemHeight: 18,
-                  itemTextColor: '#999',
-                  itemDirection: 'left-to-right',
-                  itemOpacity: 1,
-                  symbolSize: 18,
-                  symbolShape: 'circle'
-                }
-              ]}
-            />
+              legends={[{ anchor: 'bottom', direction: 'row', translateY: 56, itemWidth: 100, itemHeight: 18, symbolSize: 18 }]} />
           </div>
         );
 
       case 'comments':
         return (
-          <div className="space-y-4">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <h2 className="text-xl font-bold mb-4">Team Comments</h2>
             <div className="bg-white p-4 rounded-lg shadow">
-              <textarea
-                className="w-full p-2 border rounded"
-                rows={4}
-                placeholder="Add your comment..."
-              />
+              <textarea className="w-full p-2 border rounded" rows={4} placeholder="Add your comment..." />
               <button className="mt-2 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">
                 Add Comment
               </button>
             </div>
-          </div>
+          </motion.div>
         );
 
       default:
@@ -249,7 +172,7 @@ const SuggestedActions: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-white text-gray-900">
       <CollapsibleSidebar
         options={actionOptions}
         selectedOption={selectedView}
@@ -275,4 +198,4 @@ const SuggestedActions: React.FC = () => {
   );
 };
 
-export default SuggestedActions; 
+export default SuggestedActions;

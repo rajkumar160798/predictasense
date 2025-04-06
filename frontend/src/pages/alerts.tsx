@@ -1,4 +1,3 @@
-// src/pages/Alerts.tsx
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
@@ -12,6 +11,7 @@ import AlertPriorityTable from "../components/AlertPriorityTable";
 import ClusterPCAPlot from "../components/ClusterPCAPlot";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { motion } from "framer-motion";
 
 interface SensorRow {
   timestamp: string;
@@ -68,22 +68,46 @@ const Alerts: React.FC = () => {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
-      <div className="relative z-10 h-full w-full overflow-y-auto px-4 py-8">
-        <h1 className="text-4xl font-extrabold text-purple-800 text-center mb-4">🚨 Smart Alerts</h1>
-        <p className="text-center text-gray-600 mb-6">Click a section below to explore insights and download reports.</p>
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-12 text-center relative">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm"
+          >
+            ← Back to Dashboard
+          </button>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">🚨 Smart Alerts</h1>
+          <p className="text-gray-600">Click a section below to explore insights and download reports.</p>
+        </header>
 
-        <div className="flex justify-center flex-wrap gap-4 mb-8">
-          <button className={`px-6 py-2 rounded-full font-medium transition ${activeSection === "priority" ? "bg-purple-700 text-white" : "bg-black text-purple-300"}`} onClick={() => setActiveSection(activeSection === "priority" ? null : "priority")}>🚨 Alert Prioritization</button>
-          <button className={`px-6 py-2 rounded-full font-medium transition ${activeSection === "clustering" ? "bg-purple-700 text-white" : "bg-black text-purple-300"}`} onClick={() => setActiveSection(activeSection === "clustering" ? null : "clustering")}>🧬 Anomaly Clustering</button>
-          <button className={`px-6 py-2 rounded-full font-medium transition ${activeSection === "pca" ? "bg-purple-700 text-white" : "bg-black text-purple-300"}`} onClick={() => setActiveSection(activeSection === "pca" ? null : "pca")}>📉 PCA Visualization</button>
-          <button className="px-6 py-2 rounded-full font-medium bg-black text-purple-300" onClick={() => navigate("/dashboard")}>Dashboard</button>
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {[
+            { id: "priority", label: "🚨 Alert Prioritization" },
+            { id: "clustering", label: "🧬 Anomaly Clustering" },
+            { id: "pca", label: "📉 PCA Visualization" }
+          ].map(({ id, label }) => (
+            <motion.button
+              key={id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-6 py-2 rounded-full font-medium transition text-sm border border-gray-200 shadow-md hover:shadow-lg hover:text-white ${activeSection === id ? 'bg-purple-700 text-white' : 'bg-white text-gray-700'}`}
+              onClick={() => setActiveSection(activeSection === id ? null : id)}
+            >
+              {label}
+            </motion.button>
+          ))}
         </div>
 
-        <div id="alerts-export-section" className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          id="alerts-export-section"
+          className="space-y-6"
+        >
           {activeSection === "priority" && (
-            <div className="bg-white p-4 text-black rounded-xl  text-grey shadow-lg max-h-[80vh] overflow-y-auto">
+            <div className="bg-white p-4 text-black rounded-xl shadow-lg max-h-[80vh] overflow-y-auto">
               <h2 className="text-2xl font-bold text-purple-700 mb-4">🚨 Smart Alert Prioritization</h2>
               <AlertPriorityTable alerts={prioritizedAlerts} />
             </div>
@@ -105,10 +129,10 @@ const Alerts: React.FC = () => {
                 <tbody>
                   {clusteredAnomalies.map((row, idx) => (
                     <tr key={idx} className="border-b">
-                      <td className="py-1  text-black">{row.timestamp}</td>
-                      <td className="py-1  text-black">{row.temperature}</td>
+                      <td className="py-1 text-black">{row.timestamp}</td>
+                      <td className="py-1 text-black">{row.temperature}</td>
                       <td className="py-1 text-black">{row.pressure}</td>
-                      <td className="py-1 text-black   ">{row.vibration}</td>
+                      <td className="py-1 text-black">{row.vibration}</td>
                       <td className="py-1 font-bold text-purple-600">#{row.cluster}</td>
                     </tr>
                   ))}
@@ -123,7 +147,7 @@ const Alerts: React.FC = () => {
               <ClusterPCAPlot points={clusterPlotData} />
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

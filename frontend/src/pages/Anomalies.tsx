@@ -8,6 +8,7 @@ import { calculateAnomalyFrequency } from "../utils/anomalyFrequency";
 import { useNavigate } from "react-router-dom";
 import CommentsPanel from "../components/CommentsPanel";
 import LiveMonitor from "../pages/LiveMonitor";
+import { motion } from "framer-motion";
 
 interface SensorRow {
   timestamp: string;
@@ -73,58 +74,60 @@ const Anomalies: React.FC = () => {
   const anomalyFrequencies = useMemo(() => calculateAnomalyFrequency(insights), [insights]);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
-      <div className="relative z-10 h-full w-full overflow-y-auto px-4 py-8">
-        <h1 className="text-4xl font-extrabold text-purple-800 text-center mb-4">
-          📊 Anomaly Analysis
-        </h1>
-        <p className="text-center text-gray-600 mb-6">
-          Click a section to view or hide insights.
-        </p>
-
-        <div className="flex justify-center flex-wrap gap-4 mb-8">
-          {[
-            { id: "insights", label: "🔍 Anomaly Insights" },
-            { id: "heatmap", label: "🔥 Heatmap" },
-            { id: "frequency", label: "📋 Frequency Table" },
-            { id: "comments", label: "💬 Comments" },
-            { id: "live", label: "📡 Live Monitor" },
-          ].map((section) => (
-            <button
-              key={section.id}
-              className={`px-6 py-2 rounded-full font-medium transition ${
-                activeSection === section.id ? "bg-purple-700 text-white" : "bg-black text-purple-300"
-              }`}
-              onClick={() => setActiveSection(activeSection === section.id ? null : section.id)}
-            >
-              {section.label}
-            </button>
-          ))}
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-12 text-center relative">
           <button
-            className={`px-6 py-2 rounded-full font-medium transition bg-black text-purple-300`}
             onClick={() => navigate("/dashboard")}
+            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm"
           >
-            Dashboard
+            ← Back to Dashboard
           </button>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            📊 Anomaly Dashboard
+          </h1>
+          <p className="text-gray-600">
+            Explore anomaly trends, heatmaps, frequency metrics and live monitoring
+          </p>
+        </header>
+
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {["insights", "heatmap", "frequency", "comments", "live"].map((id) => {
+            const labelMap: any = {
+              insights: "🔍 Anomaly Insights",
+              heatmap: "🔥 Heatmap",
+              frequency: "📋 Frequency Table",
+              comments: "💬 Comments",
+              live: "📡 Live Monitor"
+            };
+            return (
+              <motion.button
+                key={id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`px-6 py-2 rounded-full font-medium transition text-sm border border-gray-200 shadow-md hover:shadow-lg hover:text-white ${activeSection === id ? 'bg-purple-700 text-white' : 'bg-white text-gray-700'}`}
+                onClick={() => setActiveSection(activeSection === id ? null : id)}
+              >
+                {labelMap[id]}
+              </motion.button>
+            );
+          })}
         </div>
 
-        <div className="w-full px-2">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full px-2"
+        >
           {activeSection === "insights" && (
-            <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
-              <h2 className="text-2xl font-semibold text-purple-700 mb-4">
-                🔍 Anomaly Insights
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            <div className="bg-white p-4 rounded-xl shadow-lg">
+              <h2 className="text-2xl font-semibold text-purple-700 mb-4">🔍 Anomaly Insights</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {insights.map((insight, index) => (
-                  <div
-                    key={index}
-                    className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md text-left"
-                  >
+                  <div key={index} className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md text-left">
                     <p className="text-gray-600 text-sm">{insight.time}</p>
-                    <h3 className="text-lg font-bold text-purple-800">
-                      {insight.metric} - {insight.severity}
-                    </h3>
+                    <h3 className="text-lg font-bold text-purple-800">{insight.metric} - {insight.severity}</h3>
                     <p className="text-gray-700">{insight.description}</p>
                   </div>
                 ))}
@@ -134,31 +137,15 @@ const Anomalies: React.FC = () => {
 
           {activeSection === "heatmap" && (
             <div className="p-4 bg-white text-black rounded-xl shadow-lg h-[80vh] w-full">
-              <h2 className="text-2xl font-bold text-purple-700 mb-4">
-                🔥 Anomaly Heatmap
-              </h2>
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">🔥 Anomaly Heatmap</h2>
               <div className="w-full h-full">
                 <ResponsiveHeatMap
                   data={heatmapData}
                   margin={{ top: 40, right: 60, bottom: 80, left: 80 }}
                   axisTop={null}
                   axisRight={null}
-                  axisBottom={{
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: -30,
-                    legend: "Metric",
-                    legendOffset: 36,
-                    legendPosition: "middle",
-                  }}
-                  axisLeft={{
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: 0,
-                    legend: "Time",
-                    legendOffset: -60,
-                    legendPosition: "middle",
-                  }}
+                  axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: -30, legend: "Metric", legendOffset: 36, legendPosition: "middle" }}
+                  axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: "Time", legendOffset: -60, legendPosition: "middle" }}
                   labelTextColor={{ from: "color", modifiers: [["darker", 2]] }}
                   borderColor={{ from: "color", modifiers: [["darker", 0.4]] }}
                   colors={{ type: "sequential", scheme: "reds" }}
@@ -170,31 +157,25 @@ const Anomalies: React.FC = () => {
 
           {activeSection === "frequency" && (
             <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
-              <h2 className="text-2xl font-bold text-purple-700 mb-4">
-                📋 Frequency Table
-              </h2>
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">📋 Frequency Table</h2>
               <AnomalyFrequencyTable frequencies={anomalyFrequencies} />
             </div>
           )}
 
           {activeSection === "comments" && (
             <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
-              <h2 className="text-2xl font-bold text-purple-700 mb-4">
-                💬 Anomaly Comments
-              </h2>
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">💬 Anomaly Comments</h2>
               <CommentsPanel anomalyId="4CITKCNtYKWuFaPEdJpI" />
             </div>
           )}
 
           {activeSection === "live" && (
             <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
-              <h2 className="text-2xl font-bold text-purple-700 mb-4">
-                📡 Live Monitoring
-              </h2>
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">📡 Live Monitoring</h2>
               <LiveMonitor />
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

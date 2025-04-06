@@ -1,11 +1,20 @@
-// src/pages/Forecast.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ResponsiveLine } from "@nivo/line";
 import { format, parseISO } from "date-fns";
-import backgroundImage from "../assets/machine-background.jpg";
 import DateRangePicker from "../components/DateRangePicker";
 import { getForecastFromAPI } from "../api/forecastService";
+import { motion } from "framer-motion";
+import {
+  Brain,
+  AlertTriangle,
+  Bell,
+  Search,
+  BarChart,
+  Heart,
+  Upload,
+  PersonStanding
+} from 'lucide-react';
 
 interface SensorRow {
   timestamp: string;
@@ -109,54 +118,47 @@ const Forecast: React.FC = () => {
   };
 
   return (
-    <div
-      className="relative h-screen text-black w-full flex flex-col justify-center items-center text-center overflow-hidden"
-    >
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
-
-      <div className="z-10 w-full px-4 py-8 overflow-y-auto" style={{ maxHeight: "100vh" }}>
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <h1 className="flex-1 text-4xl font-bold text-white text-center">Forecast Dashboard</h1>
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-12 text-center relative">
           <button
-            onClick={() => navigate("/dashboard")}
-            className="bg-white text-purple-700 px-4 py-2 rounded-full shadow hover:bg-purple-100"
+            onClick={() => navigate('/dashboard')}
+            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm"
           >
             ← Back to Dashboard
           </button>
-        </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Forecast Dashboard
+          </h1>
+          <p className="text-gray-600">
+            Explore trend predictions, AutoML output, and performance anomalies
+          </p>
+        </header>
 
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-          {/* DateRangePicker styled as a button */}
-          <div
-            className={`px-6 py-2 rounded-xl font-medium transition text-sm ${
-              selectedChart === "dateRange"
-                ? "bg-purple-700 text-white"
-                : "bg-white text-purple-300"
-            }`}
-          >
+          <div className={`px-6 py-2 rounded-xl font-medium transition text-sm bg-white text-purple-300`}>
             <DateRangePicker range={range} setRange={setRange} />
           </div>
 
-          {/* Graph selection buttons */}
-          {chartOptions.map((chart) => (
-            <button
+          {chartOptions.map((chart, index) => (
+            <motion.button
               key={chart.id}
-              className={`px-6 py-2 rounded-full font-medium transition text-sm ${
-                selectedChart === chart.id
-                  ? "bg-purple-700 text-white"
-                  : "bg-black text-purple-300"
-              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-6 py-2 rounded-full font-medium transition text-sm border border-gray-200 shadow-md hover:shadow-${chart.id === 'autoMLForecast' ? 'purple' : 'gray'}-400/50 hover:text-white ${selectedChart === chart.id ? 'bg-purple-700 text-white' : 'bg-white text-gray-700'}`}
               onClick={() => setSelectedChart(chart.id)}
             >
               {chart.title}
-            </button>
-
-          )
-          )
-          }
+            </motion.button>
+          ))}
         </div>
 
-        <div className="w-full h-[500px] bg-white p-4 rounded-xl shadow-lg">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full h-[500px] bg-white p-4 rounded-xl shadow-lg"
+        >
           {getChartData().length > 0 ? (
             <ResponsiveLine
               data={getChartData()}
@@ -202,9 +204,8 @@ const Forecast: React.FC = () => {
           ) : (
             <p className="text-center text-gray-600">No data available for this chart.</p>
           )}
-        </div>
+        </motion.div>
       </div>
-
     </div>
   );
 };

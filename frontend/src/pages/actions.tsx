@@ -1,4 +1,3 @@
-// src/pages/Actions.tsx
 import React, { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import { getSuggestedActions } from "../utils/suggestedActions";
 import { computeAnomalyImpact } from "../utils/impactForecast";
 import AnomalyImpactForecast from "../components/AnomalyImpactForecast";
 import SuggestedActions from "../components/SuggestedActions";
+import { motion } from "framer-motion";
 
 interface SensorRow {
   timestamp: string;
@@ -56,49 +56,45 @@ const Actions: React.FC = () => {
   const impacts = useMemo(() => computeAnomalyImpact(rawData), [rawData]);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
-      <div className="relative z-10 h-full w-full overflow-y-auto px-4 py-8">
-        <h1 className="text-4xl font-extrabold text-purple-800 text-center mb-4">
-          🛠️ Suggested Actions
-        </h1>
-        <p className="text-center text-gray-600 mb-6">
-          Click a section to view actions or impact insights.
-        </p>
-
-        <div className="flex justify-center flex-wrap gap-4 mb-8">
+    <div className="min-h-screen bg-white text-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-12 text-center relative">
           <button
-            className={`px-6 py-2 rounded-full font-medium transition ${
-              activeSection === "actions" ? "bg-purple-700 text-white" : "bg-black text-purple-300"
-            }`}
-            onClick={() => setActiveSection(activeSection === "actions" ? null : "actions")}
-          >
-            🛠️ Suggested Actions
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-medium transition ${
-              activeSection === "impact" ? "bg-purple-700 text-white" : "bg-black text-purple-300"
-            }`}
-            onClick={() => setActiveSection(activeSection === "impact" ? null : "impact")}
-          >
-            🧠 Anomaly Impact Forecast
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-medium transition ${
-              activeSection === "dashboard" ? "bg-purple-700 text-white" : "bg-black text-purple-300"
-            }`}
             onClick={() => navigate("/dashboard")}
+            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm"
           >
-            Dashboard
+            ← Back to Dashboard
           </button>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">🛠️ Suggested Actions</h1>
+          <p className="text-gray-600">Click a section to view actions or impact insights</p>
+        </header>
+
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {[
+            { id: "actions", label: "🛠️ Suggested Actions" },
+            { id: "impact", label: "🧠 Anomaly Impact Forecast" }
+          ].map(({ id, label }) => (
+            <motion.button
+              key={id}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-6 py-2 rounded-full font-medium transition text-sm border border-gray-200 shadow-md hover:shadow-lg hover:text-white ${activeSection === id ? 'bg-purple-700 text-white' : 'bg-white text-gray-700'}`}
+              onClick={() => setActiveSection(activeSection === id ? null : id)}
+            >
+              {label}
+            </motion.button>
+          ))}
         </div>
 
-        <div className="w-full px-2">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full px-2"
+        >
           {activeSection === "actions" && (
             <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
-              <h2 className="text-2xl font-bold text-purple-700 mb-4">
-                🛠️ Suggested Actions
-              </h2>
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">🛠️ Suggested Actions</h2>
               {actions.length > 0 ? (
                 <SuggestedActions actions={actions} />
               ) : (
@@ -109,13 +105,11 @@ const Actions: React.FC = () => {
 
           {activeSection === "impact" && (
             <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
-              <h2 className="text-2xl font-bold text-purple-700 mb-4">
-                🧠 Anomaly Impact Forecast
-              </h2>
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">🧠 Anomaly Impact Forecast</h2>
               <AnomalyImpactForecast impacts={impacts} />
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
