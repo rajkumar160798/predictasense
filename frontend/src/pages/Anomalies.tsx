@@ -6,6 +6,8 @@ import AnomalyFrequencyTable from "../components/AnomalyFrequencyTable";
 import { AnomalyInsight } from "../utils/types";
 import { calculateAnomalyFrequency } from "../utils/anomalyFrequency";
 import { useNavigate } from "react-router-dom";
+import CommentsPanel from "../components/CommentsPanel";
+import LiveMonitor from "../pages/LiveMonitor";
 
 interface SensorRow {
   timestamp: string;
@@ -16,9 +18,9 @@ interface SensorRow {
 
 const Anomalies: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string | null>("insights");
-
   const rawData = JSON.parse(localStorage.getItem("sensorData") || "[]") as SensorRow[];
   const navigate = useNavigate();
+
   const insights = useMemo(() => {
     const result: AnomalyInsight[] = [];
     for (const row of rawData) {
@@ -71,13 +73,8 @@ const Anomalies: React.FC = () => {
   const anomalyFrequencies = useMemo(() => calculateAnomalyFrequency(insights), [insights]);
 
   return (
-    <div
-      className="relative h-screen w-full overflow-hidden"
-    >
-      {/* Gradient Overlay */}
+    <div className="relative h-screen w-full overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-800 opacity-100 z-0"></div>
-
-      {/* Scrollable Content */}
       <div className="relative z-10 h-full w-full overflow-y-auto px-4 py-8">
         <h1 className="text-4xl font-extrabold text-purple-800 text-center mb-4">
           📊 Anomaly Analysis
@@ -86,58 +83,32 @@ const Anomalies: React.FC = () => {
           Click a section to view or hide insights.
         </p>
 
-        {/* Buttons */}
         <div className="flex justify-center flex-wrap gap-4 mb-8">
+          {[
+            { id: "insights", label: "🔍 Anomaly Insights" },
+            { id: "heatmap", label: "🔥 Heatmap" },
+            { id: "frequency", label: "📋 Frequency Table" },
+            { id: "comments", label: "💬 Comments" },
+            { id: "live", label: "📡 Live Monitor" },
+          ].map((section) => (
+            <button
+              key={section.id}
+              className={`px-6 py-2 rounded-full font-medium transition ${
+                activeSection === section.id ? "bg-purple-700 text-white" : "bg-black text-purple-300"
+              }`}
+              onClick={() => setActiveSection(activeSection === section.id ? null : section.id)}
+            >
+              {section.label}
+            </button>
+          ))}
           <button
-            className={`px-6 py-2 rounded-full font-medium transition ${
-              activeSection === "insights"
-                ? "bg-purple-700 text-white"
-                : "bg-black text-purple-300"
-            }`}
-            onClick={() =>
-              setActiveSection(activeSection === "insights" ? null : "insights")
-            }
-          >
-            🔍 Anomaly Insights
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-medium transition ${
-              activeSection === "heatmap"
-                ? "bg-purple-700 text-white"
-                : "bg-black text-purple-300"
-            }`}
-            onClick={() =>
-              setActiveSection(activeSection === "heatmap" ? null : "heatmap")
-            }
-          >
-            🔥 Heatmap
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-medium transition ${
-              activeSection === "frequency"
-                ? "bg-purple-700 text-white"
-                : "bg-black text-purple-300"
-            }`}
-            onClick={() =>
-              setActiveSection(activeSection === "frequency" ? null : "frequency")
-            }
-          >
-            📋 Frequency Table
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-medium transition ${
-              activeSection === "frequency"
-                ? "bg-purple-700 text-white"
-                : "bg-black text-purple-300"
-            }`}
+            className={`px-6 py-2 rounded-full font-medium transition bg-black text-purple-300`}
             onClick={() => navigate("/dashboard")}
           >
             Dashboard
           </button>
         </div>
 
-
-        {/* Insights Section */}
         <div className="w-full px-2">
           {activeSection === "insights" && (
             <div className="mt-10 max-h-[400px] overflow-y-auto bg-white p-4 rounded-xl shadow-lg">
@@ -161,7 +132,6 @@ const Anomalies: React.FC = () => {
             </div>
           )}
 
-          {/* Heatmap Section */}
           {activeSection === "heatmap" && (
             <div className="p-4 bg-white rounded-xl shadow-lg h-[80vh] w-full">
               <h2 className="text-2xl font-bold text-purple-700 mb-4">
@@ -198,13 +168,30 @@ const Anomalies: React.FC = () => {
             </div>
           )}
 
-          {/* Frequency Table Section */}
           {activeSection === "frequency" && (
             <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
               <h2 className="text-2xl font-bold text-purple-700 mb-4">
                 📋 Frequency Table
               </h2>
               <AnomalyFrequencyTable frequencies={anomalyFrequencies} />
+            </div>
+          )}
+
+          {activeSection === "comments" && (
+            <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">
+                💬 Anomaly Comments
+              </h2>
+              <CommentsPanel anomalyId="4CITKCNtYKWuFaPEdJpI" />
+            </div>
+          )}
+
+          {activeSection === "live" && (
+            <div className="p-4 bg-white rounded-xl shadow-lg max-h-[80vh] overflow-y-auto w-full">
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">
+                📡 Live Monitoring
+              </h2>
+              <LiveMonitor />
             </div>
           )}
         </div>
