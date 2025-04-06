@@ -18,6 +18,7 @@ import Health from "./pages/Health";
 import RootCause from './pages/RootCause';
 import SuggestedActions from './pages/SuggestedActions';
 import StartupPage from './pages/StartupPage';
+import IntroductionPage from './pages/IntroductionPage';
 import { ThemeProvider } from './context/ThemeContext';
 
 const App: React.FC = () => {
@@ -27,6 +28,7 @@ const App: React.FC = () => {
         <Routes>
           {/* Landing and Authentication */}
           <Route path="/" element={<StartupPage />} />
+          <Route path="/introduction" element={<IntroductionPage />} />
           <Route path="/landing" element={<LandingPage />} />
           
           {/* Main Application Routes */}

@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Zap, Database, BarChart3, Brain, Cpu, Star, Sun, Moon, Github, Twitter, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { Shield, Zap, Database, BarChart3, Brain, Cpu, Star, Sun, Moon, Github, Twitter, Linkedin, Mail, MapPin, Phone, ArrowRight } from 'lucide-react';
 import CountUp from 'react-countup';
 import { useTheme } from '../context/ThemeContext';
 
@@ -107,11 +107,11 @@ export default function StartupPage() {
               transition={{ delay: 0.4 }}
               className="flex gap-4 justify-center"
             >
-              <button 
-                onClick={() => navigate('/upload')}
-                className="px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all transform hover:scale-105"
+              <button
+                onClick={() => navigate('/introduction')}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 rounded-lg hover:from-yellow-400 hover:to-yellow-500 transition-all flex items-center gap-2 font-semibold shadow-lg hover:shadow-yellow-500/50"
               >
-                Try Demo
+                Try Demo <ArrowRight className="w-4 h-4" />
               </button>
               <button className="px-8 py-3 bg-white/10 backdrop-blur-lg text-white rounded-lg hover:bg-white/20 transition-all transform hover:scale-105">
                 Schedule Demo
