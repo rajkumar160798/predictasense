@@ -13,6 +13,7 @@ import LiveMonitor from "./pages/LiveMonitor";
 import Rootcauses from "./pages/RootCauses";
 import Actions from "./pages/actions";
 import Alerts from "./pages/alerts";
+import Health from "./pages/Health";
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/alerts" element={<Alerts />} />
+        <Route path="/health" element={<Health />} />
 
         {/* 🔹 Main layout with sidebar */}
       </Routes>

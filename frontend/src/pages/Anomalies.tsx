@@ -133,7 +133,7 @@ const Anomalies: React.FC = () => {
           )}
 
           {activeSection === "heatmap" && (
-            <div className="p-4 bg-white rounded-xl shadow-lg h-[80vh] w-full">
+            <div className="p-4 bg-white text-black rounded-xl shadow-lg h-[80vh] w-full">
               <h2 className="text-2xl font-bold text-purple-700 mb-4">
                 🔥 Anomaly Heatmap
               </h2>

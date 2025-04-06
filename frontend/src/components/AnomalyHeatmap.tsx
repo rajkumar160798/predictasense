@@ -18,7 +18,7 @@ const AnomalyHeatmap: React.FC<HeatmapProps> = ({ data }) => {
   }));
 
   return (
-    <div className="w-full h-[400px]">
+    <div className="w-full h-[400px] text-black">
       <ResponsiveHeatMapCanvas
         data={transformed}
         margin={{ top: 60, right: 90, bottom: 60, left: 100 }}

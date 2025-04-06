@@ -39,6 +39,27 @@ const cards = [
     emoji: "🚨",
     bg: "rgba(185, 186, 150, 0.15)", // light blue
   },
+  {
+    title: "Health",
+    description: "View system health score.",
+    link: "/health",
+    emoji: "🏥",
+    bg: "rgba(185, 186, 150, 0.15)", // light blue
+  },
+  {
+    title: "Upload New File",
+    description: "Submit new sensor data for analysis.",
+    link: "/upload",
+    emoji: "📤",
+    bg: "rgba(35, 246, 150, 0.15)", // light blue
+  },
+  {
+    title: "about",
+    description: "learn more about provansIQ",
+    link: "/about",
+    emoji: "ℹ️",
+    bg: "rgba(145, 346, 240, 0.15)", // light blue
+  },
 ];
 
 const Dashboard: React.FC = () => {

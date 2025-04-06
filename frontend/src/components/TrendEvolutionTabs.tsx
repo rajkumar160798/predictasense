@@ -30,7 +30,7 @@ const TrendEvolutionTabs: React.FC<Props> = ({ data }) => {
   return (
     <div>
       {/* Tab Buttons */}
-      <div className="flex justify-center gap-4 mb-4 bg-white p-4 rounded-xl shadow-lg">
+      <div className="flex justify-center text-black gap-4 mb-4 bg-white p-4 rounded-xl shadow-lg">
         {["temperature", "vibration", "pressure"].map((metric) => (
           <button
             key={metric}
@@ -50,7 +50,7 @@ const TrendEvolutionTabs: React.FC<Props> = ({ data }) => {
       </div>
 
       {/* Trend Chart */}
-      <div className="h-[400px] bg-white p-4 rounded-xl shadow-lg !bg-whte">
+      <div className="h-[400px] bg-white  text-black p-4 rounded-xl shadow-lg !bg-whte">
         <ResponsiveLine
           data={getChartData()}
           margin={{ top: 50, right: 60, bottom: 100, left: 60 }}

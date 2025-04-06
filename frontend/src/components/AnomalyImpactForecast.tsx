@@ -38,7 +38,7 @@ const AnomalyImpactForecast: React.FC<Props> = ({ impacts }) => {
           }}
         >
           <div className="text-sm text-gray-600">{entry.time}</div>
-          <div className="font-bold">
+          <div className="font-bold text-black">
             {entry.metric} - Risk Score: {entry.riskScore}
           </div>
           <div className="text-gray-700">{entry.impact}</div>

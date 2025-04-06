@@ -78,7 +78,6 @@ const Alerts: React.FC = () => {
           <button className={`px-6 py-2 rounded-full font-medium transition ${activeSection === "priority" ? "bg-purple-700 text-white" : "bg-black text-purple-300"}`} onClick={() => setActiveSection(activeSection === "priority" ? null : "priority")}>🚨 Alert Prioritization</button>
           <button className={`px-6 py-2 rounded-full font-medium transition ${activeSection === "clustering" ? "bg-purple-700 text-white" : "bg-black text-purple-300"}`} onClick={() => setActiveSection(activeSection === "clustering" ? null : "clustering")}>🧬 Anomaly Clustering</button>
           <button className={`px-6 py-2 rounded-full font-medium transition ${activeSection === "pca" ? "bg-purple-700 text-white" : "bg-black text-purple-300"}`} onClick={() => setActiveSection(activeSection === "pca" ? null : "pca")}>📉 PCA Visualization</button>
-          <button className="px-6 py-2 rounded-full font-medium bg-green-700 text-white" onClick={handlePDFExport}>📄 Generate PDF</button>
           <button className="px-6 py-2 rounded-full font-medium bg-black text-purple-300" onClick={() => navigate("/dashboard")}>Dashboard</button>
         </div>
 

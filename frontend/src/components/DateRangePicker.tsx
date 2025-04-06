@@ -21,7 +21,7 @@ const DateRangePicker: React.FC<Props> = ({ range, setRange }) => {
   return (
     <div className="relative" ref={ref as React.RefObject<HTMLDivElement>}>
       <div
-        className="w-full cursor-pointer border border-gray-300 p-2 rounded text-center bg-white text-purple-700"
+        className="w-full cursor-pointer  border p-2 rounded text-center bg-white text-purple-700"
         onClick={() => setOpen(!open)}
       >
         <span className="font-semibold">
