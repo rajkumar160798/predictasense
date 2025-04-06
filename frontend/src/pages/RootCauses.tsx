@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { generateRootCauses } from "../utils/rootCauseEngine";
 import { AnomalyInsight } from "../utils/types";
 import { scoreRootCauses } from "../utils/rootCauseConfidence";
+import { format, parseISO } from "date-fns";
 
 const RootCauses: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string | null>("table");
@@ -18,7 +19,7 @@ const anomalyInsights: AnomalyInsight[] = useMemo(() => {
   const result: AnomalyInsight[] = [];
 
   for (const row of rawData) {
-    const time = row.timestamp;
+    const time = format(parseISO(row.timestamp), "yyyy-MM-dd HH:mm");
 
     if (row.temperature > 80) {
       result.push({
@@ -51,15 +52,17 @@ const anomalyInsights: AnomalyInsight[] = useMemo(() => {
   return result;
 }, [rawData]);
 
-const rootCauses: RootCauseEntry[] = useMemo(() => generateRootCauses(anomalyInsights), [anomalyInsights]);
+const rootCauses: RootCauseEntry[] = useMemo(() => 
+  generateRootCauses(anomalyInsights).map((cause) => ({
+    ...cause,
+    time: anomalyInsights.find((insight) => insight.metric === cause.metric)?.time || "Unknown",
+  })), 
+  [anomalyInsights]
+);
 
   const navigate = useNavigate();
-  const scoredRootCauses = useMemo(() => {
-    return rootCauses.map((entry) => ({
-      ...entry,
-      confidence: Math.floor(Math.random() * 100) + 1, // Simulate scores
-    }));
-  }, [rootCauses]);
+  const scoredRootCauses = useMemo(() => scoreRootCauses(rootCauses), [rootCauses]);
+
 
   return (
     <div
