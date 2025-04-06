@@ -1,6 +1,7 @@
 // src/pages/Dashboard.tsx
 import React from "react";
 import { Link } from "react-router-dom";
+import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
 
 const cards = [
   {
@@ -32,15 +33,13 @@ const cards = [
     bg: "rgba(96, 165, 250, 0.15)", // light blue
   },
   {
-    title: "Generate Report",
-    description: "Download a PDF summary report.",
-    link: "/reports",
-    emoji: "📄",
-    bg: "rgba(74, 222, 128, 0.15)", // light green
+    title: "Smart Alerts",
+    description: "Get alerts for anomalies.",
+    link: "/alerts",
+    emoji: "🚨",
+    bg: "rgba(185, 186, 150, 0.15)", // light blue
   },
 ];
-
-
 
 const Dashboard: React.FC = () => {
   return (
@@ -72,6 +71,15 @@ const Dashboard: React.FC = () => {
             </div>
           </Link>
         ))}
+
+        {/* Generate Report Card */}
+        <div
+          className="rounded-xl p-10 shadow hover:shadow-lg transition-transform duration-200 hover:scale-105 border border-gray-200"
+          style={{ backgroundColor: "rgba(74, 222, 128, 0.15)" }} // light green
+        >
+          {/* PDF Generator Button */}
+          <ForecastPDFGenerator />
+        </div>
       </div>
     </div>
   );

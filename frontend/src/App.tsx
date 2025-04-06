@@ -12,6 +12,7 @@ import About from "./pages/About"; // Import the new About page
 import LiveMonitor from "./pages/LiveMonitor";
 import Rootcauses from "./pages/RootCauses";
 import Actions from "./pages/actions";
+import Alerts from "./pages/alerts";
 
 
 function App() {
@@ -31,6 +32,9 @@ function App() {
         <Route path="/actions" element={<Actions />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/alerts" element={<Alerts />} />
+
+        {/* 🔹 Main layout with sidebar */}
       </Routes>
     </Router>
   );
