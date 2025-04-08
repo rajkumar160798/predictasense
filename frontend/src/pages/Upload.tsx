@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import Papa from "papaparse";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
-import { Upload as UploadIcon, ArrowRight } from 'lucide-react';
+import { Upload as UploadIcon, ArrowRight,Sun,Moon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { db } from "../utils/firebase"; 
 import { collection, addDoc } from "firebase/firestore";
 import 'animate.css';
 import { sendSlackAlert } from "../utils/sendSlackAlert";
+import { useTheme } from '../context/ThemeContext';
 
 interface SensorRow {
   timestamp: string;
@@ -34,7 +35,7 @@ const Upload: React.FC = () => {
     e.preventDefault();
     setIsDragging(true);
   };
-
+  const { theme, toggleTheme } = useTheme();
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
@@ -123,20 +124,21 @@ const Upload: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
       <div className="container mx-auto px-4 py-8">
         <header className="mb-12 text-center relative">
           <button
             onClick={() => navigate('/')}
-            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm"
+            className="absolute left-0 top-0 px-4 py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2 border border-gray-200 shadow-sm
+            dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
             Back to Home
           </button>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 dark:text-white ">
             Upload Your Sensor Data
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-white ">
             Upload your CSV file to start analyzing your machine's performance
           </p>
         </header>
@@ -147,15 +149,16 @@ const Upload: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl mx-auto"
           >
-            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8 shadow-sm">
-              <p className="text-gray-700 mb-2 flex items-center gap-2">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8 shadow-sm
+            dark:bg-gray-800 dark:border-gray-700">
+              <p className="text-gray-700  dark:text-white mb-2 flex items-center gap-2">
                 <span className="text-blue-500">📄</span> Your CSV file should have these headers:
               </p>
-              <ul className="list-disc pl-6 text-gray-600 space-y-1">
-                <li><strong className="text-gray-900">timestamp</strong> (e.g., 2024-01-01T00:00:00Z)</li>
-                <li><strong className="text-gray-900">temperature</strong> (in °C)</li>
-                <li><strong className="text-gray-900">vibration</strong> (in g-force)</li>
-                <li><strong className="text-gray-900">pressure</strong> (in hPa)</li>
+              <ul className="list-disc pl-6 text-gray-600 dark:text-white space-y-1">
+                <li><strong className="text-gray-900 dark:text-white">timestamp</strong> (e.g., 2024-01-01T00:00:00Z)</li>
+                <li><strong className="text-gray-900 dark:text-white  ">temperature</strong> (in °C)</li>
+                <li><strong className="text-gray-900 dark:text-white  ">vibration</strong> (in g-force)</li>
+                <li><strong className="text-gray-900 dark:text-white  ">pressure</strong> (in hPa)</li>
               </ul>
             </div>
 
@@ -169,10 +172,11 @@ const Upload: React.FC = () => {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              <div className="p-8 rounded-lg bg-white border border-gray-100 shadow-sm">
+              <div className="p-8 rounded-lg bg-white border border-gray-100 shadow-sm
+                dark:bg-gray-800 dark:border-gray-700">
                 <UploadIcon className="w-16 h-16 mx-auto mb-4 text-blue-500" />
-                <h2 className="text-2xl font-semibold mb-4 text-gray-900">Upload Your Data</h2>
-                <p className="text-gray-600 mb-6">
+                <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white ">Upload Your Data</h2>
+                <p className="text-gray-600 dark:text-white  mb-6">
                   Drag and drop your CSV file here, or click to select
                 </p>
                 <input
@@ -197,18 +201,19 @@ const Upload: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-8 space-y-4"
               >
-                <div className="bg-white border border-green-200 p-6 rounded-lg shadow-sm">
+                <div className="bg-white border border-green-200 p-6 rounded-lg shadow-sm
+                dark:bg-gray-800 dark:border-green-700">
                   <p className="text-2xl font-bold mb-2 text-green-600">✅ File Upload Successful!</p>
-                  <p className="mb-4 text-gray-700">Your sensor data has been processed and is ready for analysis.</p>
-                  <ul className="text-sm space-y-2 text-gray-600">
+                  <p className="mb-4 text-gray-700 dark:text-white ">Your sensor data has been processed and is ready for analysis.</p>
+                  <ul className="text-sm space-y-2 text-gray-600 dark: ">
                     <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> {data.length} data points processed
+                      <span className="text-green-500">✓</span><span className="text-gray-900 dark:text-white "> {data.length} data points processed </span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> Anomaly detection complete
+                      <span className="text-green-500">✓</span><span className="text-gray-900 dark:text-white ">  Anomaly detection complete</span>
                     </li>
                     <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> Heatmap data generated
+                      <span className="text-green-500">✓</span> <span className="text-gray-900 dark:text-white "> Heatmap data generated</span>
                     </li>
                   </ul>
                 </div>
@@ -228,7 +233,7 @@ const Upload: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
             <div className="flex items-center gap-2 mb-4">
               <UploadIcon className="w-6 h-6 text-blue-500" />
-              <span className="text-gray-900 font-semibold">ProvansIQ</span>
+              <span className="text-gray-900 font-semibold dark:text-white ">ProvansIQ</span>
             </div>
             <p className="text-gray-600 text-sm text-center">
               Empowering Industry 4.0 with Advanced Predictive Maintenance
@@ -244,6 +249,13 @@ const Upload: React.FC = () => {
           </div>
         </footer>
       </div>
+      {/* Floating Theme Toggle */}
+      <button
+        onClick={toggleTheme}
+        className="fixed bottom-6 left-6 p-3 rounded-full bg-gray-800 dark:bg-white text-white dark:text-gray-800 shadow-lg hover:scale-110 transition-transform"
+      >
+        {theme === 'dark' ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+      </button>
     </div>
   );
 };
