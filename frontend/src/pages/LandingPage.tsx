@@ -120,21 +120,36 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-background">
-          <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Our Features</h2>
-            <div className="grid md:grid-cols-3 gap-8">
+        <section className="py-20 bg-white dark:bg-gray-900 backdrop-blur-md"
+ >
+          <div className="container mx-auto px-4  ">
+            <h2 className="text-4xl font-bold text-center mb-16 gradient-text">
+              Our Features
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8 text-grey-800 bg-white dark:bg-gray-800 dark:text-white p-8 rounded-lg shadow-lg">
               {[
-                { icon: Brain, title: 'AutoML Forecasting', desc: 'Advanced machine learning models that adapt to your data' },
-                { icon: Zap, title: 'Anomaly Detection', desc: 'Real-time monitoring and instant alerts' },
-                { icon: BarChart3, title: 'Custom Dashboards', desc: 'Intuitive visualization of complex data' }
+                {
+                  icon: Brain,
+                  title: "AutoML Forecasting",
+                  desc: "Advanced machine learning models that adapt to your data",
+                },
+                {
+                  icon: Zap,
+                  title: "Anomaly Detection",
+                  desc: "Real-time monitoring and instant alerts",
+                },
+                {
+                  icon: BarChart3,
+                  title: "Custom Dashboards",
+                  desc: "Intuitive visualization of complex data",
+                },
               ].map((feature, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="glass-card p-6 card-hover"
+                  className="glass-card p-6 card-hover bg-white dark:bg-gray-800"
                 >
                   <feature.icon className="w-12 h-12 mb-4 text-indigo-500" />
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -241,9 +256,14 @@ export default function LandingPage() {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 bg-background">
+        <section
+          id="contact"
+          className="py-20 bg-white dark:bg-gray-900 backdrop-blur-md"
+        >
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Get in Touch</h2>
+            <h2 className="text-4xl font-bold text-center mb-16 gradient-text">
+              Get in Touch
+            </h2>
             <div className="max-w-3xl mx-auto">
               <div className="glass-card p-8">
                 <form className="space-y-6">
@@ -252,7 +272,7 @@ export default function LandingPage() {
                       <label className="block text-sm font-medium mb-2">Name</label>
                       <input
                         type="text"
-                        className="w-full px-4 py-2 rounded-lg bg-white/5 border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
                         placeholder="Your name"
                       />
                     </div>
@@ -260,7 +280,7 @@ export default function LandingPage() {
                       <label className="block text-sm font-medium mb-2">Email</label>
                       <input
                         type="email"
-                        className="w-full px-4 py-2 rounded-lg bg-white/5 border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                        className="w-full px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -269,7 +289,7 @@ export default function LandingPage() {
                     <label className="block text-sm font-medium mb-2">Message</label>
                     <textarea
                       rows={4}
-                      className="w-full px-4 py-2 rounded-lg bg-white/5 border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
                       placeholder="Your message..."
                     />
                   </div>
