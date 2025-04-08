@@ -42,7 +42,7 @@ const LiveMonitor: React.FC = () => {
       <div className="relative z-10 w-full flex justify-center py-4">
         <button
           onClick={() => navigate("/dashboard")}
-          className="bg-white text-purple-700 px-6 py-3 rounded-full text-lg shadow-md hover:bg-purple-100 hover:shadow-lg transition !bg-white"
+          className="text-purple-700 px-6 py-3 rounded-full text-lg shadow-md hover:bg-purple-100 hover:shadow-lg transition !bg-white"
         >
           ← Back to Dashboard
         </button>

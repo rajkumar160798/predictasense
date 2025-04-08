@@ -1,73 +1,74 @@
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, BarChart3, Brain, Star, Sun, Moon, Github, Twitter, Linkedin, Mail, MapPin, Phone, ArrowRight } from 'lucide-react';
+import { Zap, BarChart3, Brain, Sun, Moon, Github, Linkedin, Mail, MapPin, Phone, ArrowRight } from 'lucide-react';
 import CountUp from 'react-countup';
 import { useTheme } from '../context/ThemeContext';
+import { FaMedium } from 'react-icons/fa';
 
 export default function StartupPage() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
-  const pricingPlans = [
-    {
-      name: 'Starter',
-      price: 49,
-      features: [
-        'Basic AI Predictions',
-        '5 Machine Connections',
-        'Email Support',
-        'Basic Analytics'
-      ]
-    },
-    {
-      name: 'Professional',
-      price: 149,
-      features: [
-        'Advanced AI Models',
-        '25 Machine Connections',
-        '24/7 Priority Support',
-        'Advanced Analytics',
-        'Custom Dashboards'
-      ]
-    },
-    {
-      name: 'Enterprise',
-      price: 499,
-      features: [
-        'Custom AI Solutions',
-        'Unlimited Connections',
-        'Dedicated Support Team',
-        'Full API Access',
-        'White Labeling',
-        'Custom Integration'
-      ]
-    }
-  ];
+  // const pricingPlans = [
+  //   {
+  //     name: 'Starter',
+  //     price: 49,
+  //     features: [
+  //       'Basic AI Predictions',
+  //       '5 Machine Connections',
+  //       'Email Support',
+  //       'Basic Analytics'
+  //     ]
+  //   },
+  //   {
+  //     name: 'Professional',
+  //     price: 149,
+  //     features: [
+  //       'Advanced AI Models',
+  //       '25 Machine Connections',
+  //       '24/7 Priority Support',
+  //       'Advanced Analytics',
+  //       'Custom Dashboards'
+  //     ]
+  //   },
+  //   {
+  //     name: 'Enterprise',
+  //     price: 499,
+  //     features: [
+  //       'Custom AI Solutions',
+  //       'Unlimited Connections',
+  //       'Dedicated Support Team',
+  //       'Full API Access',
+  //       'White Labeling',
+  //       'Custom Integration'
+  //     ]
+  //   }
+  // ];
 
-  const testimonials = [
-    {
-      name: 'Sarah Johnson',
-      role: 'CTO at TechCorp',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80',
-      quote: 'ProvansIQ has transformed our maintenance operations. The AI predictions are incredibly accurate.',
-      rating: 5
-    },
-    {
-      name: 'Michael Chen',
-      role: 'Operations Manager',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80',
-      quote: 'The real-time monitoring and alerts have helped us prevent multiple critical failures.',
-      rating: 5
-    },
-    {
-      name: 'Emily Rodriguez',
-      role: 'Plant Director',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80',
-      quote: 'Outstanding support team and the platform is incredibly user-friendly. Highly recommended!',
-      rating: 5
-    }
-  ];
+  // const testimonials = [
+  //   {
+  //     name: 'Sarah Johnson',
+  //     role: 'CTO at TechCorp',
+  //     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80',
+  //     quote: 'ProvansIQ has transformed our maintenance operations. The AI predictions are incredibly accurate.',
+  //     rating: 5
+  //   },
+  //   {
+  //     name: 'Michael Chen',
+  //     role: 'Operations Manager',
+  //     image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80',
+  //     quote: 'The real-time monitoring and alerts have helped us prevent multiple critical failures.',
+  //     rating: 5
+  //   },
+  //   {
+  //     name: 'Emily Rodriguez',
+  //     role: 'Plant Director',
+  //     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80',
+  //     quote: 'Outstanding support team and the platform is incredibly user-friendly. Highly recommended!',
+  //     rating: 5
+  //   }
+  // ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,11 +111,11 @@ export default function StartupPage() {
                 onClick={() => navigate('/introduction')}
                 className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 rounded-lg hover:from-yellow-400 hover:to-yellow-500 transition-all flex items-center gap-2 font-semibold shadow-lg hover:shadow-yellow-500/50"
               >
-                Try Demo <ArrowRight className="w-4 h-4" />
+                GET STARTED <ArrowRight className="w-4 h-4" />
               </button>
-              <button className="px-8 py-3 bg-white/10 backdrop-blur-lg text-white rounded-lg hover:bg-white/20 transition-all transform hover:scale-105">
+              {/* <button className="px-8 py-3 bg-white/10 backdrop-blur-lg text-white rounded-lg hover:bg-white/20 transition-all transform hover:scale-105">
                 Schedule Demo
-              </button>
+              </button> */}
             </motion.div>
           </div>
         </section>
@@ -174,7 +175,7 @@ export default function StartupPage() {
         </section>
 
         {/* Pricing Section */}
-        <section className="py-20 bg-background">
+        {/* <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Pricing Plans</h2>
             <div className="grid md:grid-cols-3 gap-8">
@@ -206,9 +207,9 @@ export default function StartupPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
-        {/* Testimonials Section */}
+        {/* Testimonials Section
         <section className="py-20 bg-gray-50 dark:bg-gray-900">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-16 gradient-text">What Our Clients Say</h2>
@@ -238,7 +239,7 @@ export default function StartupPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Contact Section */}
         <section id="contact" className="py-20 bg-background">
@@ -298,8 +299,8 @@ export default function StartupPage() {
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2">
                 <li><a href="#features" className="hover:text-indigo-400 transition-colors">Features</a></li>
-                <li><a href="#pricing" className="hover:text-indigo-400 transition-colors">Pricing</a></li>
-                <li><a href="#testimonials" className="hover:text-indigo-400 transition-colors">Testimonials</a></li>
+                {/* <li><a href="#pricing" className="hover:text-indigo-400 transition-colors">Pricing</a></li> */}
+                {/* <li><a href="#testimonials" className="hover:text-indigo-400 transition-colors">Testimonials</a></li> */}
                 <li><a href="#contact" className="hover:text-indigo-400 transition-colors">Contact</a></li>
               </ul>
             </div>
@@ -308,28 +309,28 @@ export default function StartupPage() {
               <ul className="space-y-2">
                 <li className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  123 AI Street, Tech City
+                  Dallas, TX
                 </li>
                 <li className="flex items-center gap-2">
                   <Phone className="w-4 h-4" />
-                  +1 (555) 123-4567
+                  +1 (425) 504-9728
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  info@provansiq.com
+                  myakalarajkumar1998@gmail.com
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
+              <h4 className="text-lg font-semibold mb-4">Follow Me</h4>
               <div className="flex space-x-4">
-                <a href="#" className="hover:text-indigo-400 transition-colors">
-                  <Twitter className="w-6 h-6" />
+                <a href="https://medium.com/@myakalarajkumar1998" className="hover:text-indigo-400 transition-colors">
+                  <FaMedium className="w-6 h-6" />
                 </a>
-                <a href="#" className="hover:text-indigo-400 transition-colors">
+                <a href="https://www.linkedin.com/in/raj-kumar-myakala-927860264/" className="hover:text-indigo-400 transition-colors">
                   <Linkedin className="w-6 h-6" />
                 </a>
-                <a href="#" className="hover:text-indigo-400 transition-colors">
+                <a href="https://github.com/rajkumar160798/predictasense" className="hover:text-indigo-400 transition-colors">
                   <Github className="w-6 h-6" />
                 </a>
               </div>
@@ -337,6 +338,11 @@ export default function StartupPage() {
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
             <p>&copy; {new Date().getFullYear()} ProvansIQ. All rights reserved.</p>
+          </div>
+          <div className="flex justify-center mt-4">
+            <a href="https://www.linkedin.com/in/raj-kumar-myakala-927860264/" className="text-gray-500 hover:text-indigo-400 transition-colors text-sm">
+              Developed by Raj Kumar Myakala | AI/ML developer  
+            </a>
           </div>
         </div>
       </footer>
