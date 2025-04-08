@@ -1,8 +1,7 @@
-import React from 'react';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Shield, Zap, Database, BarChart3, Brain, Cpu, Star, Sun, Moon, Github, Twitter, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import {  Zap, BarChart3, Brain, Star, Sun, Moon, Github, Twitter, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
 import CountUp from 'react-countup';
 import { useTheme } from '../context/ThemeContext';
 

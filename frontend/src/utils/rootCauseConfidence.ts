@@ -1,10 +1,11 @@
 // src/utils/rootCauseConfidence.ts
 
 interface RootCauseEntry {
+  
     metric: string;
     severity: string;
     time: string;
-    timestamp: string;
+    timestamp?: string;
   }
   
   interface ScoredRootCause extends RootCauseEntry {

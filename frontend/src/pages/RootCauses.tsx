@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import RootCauseTable from "../components/RootCauseTable";
 import RootCauseConfidenceTable from "../components/RootCauseConfidenceTable";
-import { RootCauseEntry } from "../utils/types";
+import { RootCauseEntry, SeverityLevel } from "../utils/types";
 import { useNavigate } from "react-router-dom";
 import { generateRootCauses } from "../utils/rootCauseEngine";
 import { AnomalyInsight } from "../utils/types";
@@ -37,6 +37,9 @@ const RootCauses: React.FC = () => {
     generateRootCauses(anomalyInsights).map((cause) => ({
       ...cause,
       time: anomalyInsights.find((insight) => insight.metric === cause.metric)?.time || "Unknown",
+      severity: cause.severity as SeverityLevel, // Ensure severity matches the expected type
+      timestamp: typeof cause.timestamp === "string" ? cause.timestamp : "Unknown",
+      rootCause: cause.rootCause // Ensure timestamp is always a string
     })),
     [anomalyInsights]
   );

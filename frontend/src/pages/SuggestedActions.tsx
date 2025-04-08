@@ -5,15 +5,15 @@ import { ResponsivePie } from '@nivo/pie';
 import CollapsibleSidebar from '../components/CollapsibleSidebar';
 import { motion } from 'framer-motion';
 
-interface Action {
-  id: string;
-  title: string;
-  description: string;
-  severity: 'High' | 'Medium' | 'Low';
-  impact: number;
-  status: 'Open' | 'In Progress' | 'Resolved';
-  metric: string;
-}
+// interface Action {
+//   id: string;
+//   title: string;
+//   description: string;
+//   severity: 'High' | 'Medium' | 'Low';
+//   impact: number;
+//   status: 'Open' | 'In Progress' | 'Resolved';
+//   metric: string;
+// }
 
 const actionOptions = [
   {
@@ -124,7 +124,7 @@ const SuggestedActions: React.FC = () => {
               axisBottom={{ tickRotation: -45, legend: 'Action', legendOffset: 40 }}
               axisLeft={{ legend: 'Impact Score', legendOffset: -40 }}
               labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-              legends={[{ anchor: 'bottom-right', direction: 'column', translateX: 120, itemWidth: 100, itemHeight: 20 }]} />
+              legends={[{ anchor: 'bottom-right', direction: 'column', translateX: 120, itemWidth: 100, itemHeight: 20, dataFrom: 'keys' }]} />
           </div>
         );
 

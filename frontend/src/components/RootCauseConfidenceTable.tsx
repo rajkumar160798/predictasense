@@ -2,6 +2,7 @@
 import React from "react";
 
 interface RootCauseEntry {
+  timestamp?: string;
   metric: string;
   severity: string;
   time: string;

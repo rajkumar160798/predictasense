@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { ResponsiveHeatMap } from "@nivo/heatmap";
-import AnomalyInsightsSection from "../components/AnomalyInsightsSection";
+// import AnomalyInsightsSection from "../components/AnomalyInsightsSection";
 import AnomalyFrequencyTable from "../components/AnomalyFrequencyTable";
 import { AnomalyInsight } from "../utils/types";
 import { calculateAnomalyFrequency } from "../utils/anomalyFrequency";

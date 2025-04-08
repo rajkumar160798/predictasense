@@ -1,7 +1,6 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Zap, Database, BarChart3, Brain, Cpu } from 'lucide-react';
+import { ArrowRight, Zap, Database, BarChart3, Brain } from 'lucide-react';
 
 export default function IntroductionPage() {
   const navigate = useNavigate();

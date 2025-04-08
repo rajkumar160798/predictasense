@@ -2,15 +2,14 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { AnomalyInsight } from "../utils/types";
-import { calculateAnomalyFrequency } from "../utils/anomalyFrequency";
 import { computeAnomalyImpact, getImpactScorePerMetric } from "../utils/impactForecast";
 import { prioritizeAlerts } from "../utils/alertPrioritization";
 import { clusterAnomalies } from "../utils/anomalyClustering";
 import { get2DClusterData } from "../utils/pcaUtils";
 import AlertPriorityTable from "../components/AlertPriorityTable";
 import ClusterPCAPlot from "../components/ClusterPCAPlot";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+// import jsPDF from "jspdf";
+// import html2canvas from "html2canvas";
 import { motion } from "framer-motion";
 
 interface SensorRow {
@@ -57,15 +56,15 @@ const Alerts: React.FC = () => {
 
   const clusterPlotData = useMemo(() => get2DClusterData(clusteredAnomalies).map(p => ({ ...p, cluster: p.cluster.toString() })), [clusteredAnomalies]);
 
-  const handlePDFExport = async () => {
-    const input = document.getElementById("alerts-export-section");
-    if (!input) return;
-    const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF();
-    pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
-    pdf.save("alerts_report.pdf");
-  };
+  // const handlePDFExport = async () => {
+  //   const input = document.getElementById("alerts-export-section");
+  //   if (!input) return;
+  //   const canvas = await html2canvas(input);
+  //   const imgData = canvas.toDataURL("image/png");
+  //   const pdf = new jsPDF();
+  //   pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+  //   pdf.save("alerts_report.pdf");
+  // };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">

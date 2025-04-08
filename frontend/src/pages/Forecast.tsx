@@ -5,16 +5,6 @@ import { format, parseISO } from "date-fns";
 import DateRangePicker from "../components/DateRangePicker";
 import { getForecastFromAPI } from "../api/forecastService";
 import { motion } from "framer-motion";
-import {
-  Brain,
-  AlertTriangle,
-  Bell,
-  Search,
-  BarChart,
-  Heart,
-  Upload,
-  PersonStanding
-} from 'lucide-react';
 
 interface SensorRow {
   timestamp: string;
@@ -140,7 +130,7 @@ const Forecast: React.FC = () => {
             <DateRangePicker range={range} setRange={setRange} />
           </div>
 
-          {chartOptions.map((chart, index) => (
+          {chartOptions.map((chart) => (
             <motion.button
               key={chart.id}
               whileHover={{ scale: 1.05 }}

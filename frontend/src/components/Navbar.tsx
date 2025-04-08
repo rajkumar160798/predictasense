@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Moon, Sun, Menu, X, Brain } from 'lucide-react';
+
 import { motion } from 'framer-motion';
-import { useTheme } from '../context/ThemeContext';
+import { HiMenu, HiX } from 'react-icons/hi'; // Correct imports for the Menu and Close icons
+import { FaBrain } from 'react-icons/fa'; // Importing Brain icon from react-icons
+
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+ 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,12 +29,11 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <Brain className="h-8 w-8 text-indigo-600" />
+            <FaBrain className="h-8 w-8 text-indigo-600" />
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               ProvansIQ
             </span>
-          </Link>
+          
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
@@ -68,9 +69,9 @@ export default function Navbar() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
-              <X className="h-6 w-6" />
+              <HiX className="h-6 w-6" />
             ) : (
-              <Menu className="h-6 w-6" />
+              <HiMenu className="h-6 w-6" />
             )}
           </button>
         </div>

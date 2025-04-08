@@ -1,20 +1,20 @@
 // src/pages/Dashboard.tsx
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, AlertTriangle, Bell, Search, BarChart, Settings, Upload, ArrowRight, Heart, KeyRoundIcon, PersonStanding } from 'lucide-react';
+import { Brain, AlertTriangle, Bell, Search, BarChart, Upload, ArrowRight, Heart, PersonStanding } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
-import Health from './Health';
+// import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
+// import Health from './Health';
 
 
 export default function DashboardPage() {
-  const [isUploaded, setIsUploaded] = useState(() => {
+  const [isUploaded] = useState(() => {
     // Check if there's sensor data in localStorage
     const sensorData = localStorage.getItem("sensorData");
     return sensorData !== null && JSON.parse(sensorData).length > 0;
   });
   const [isDragging, setIsDragging] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [showSuccess] = useState(false);
   const navigate = useNavigate();
 
   const dashboardButtons = [
@@ -45,15 +45,17 @@ export default function DashboardPage() {
     handleFiles(files);
   }, []);
 
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    handleFiles(files);
-  }, []);
+  // const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files ? Array.from(e.target.files) : [];
+  //   handleFiles(files);
+  // }, []);
 
   const handleFiles = (files: File[]) => {
-    // Redirect to upload page for file handling
-    navigate('/upload');
-  };
+      // Handle the files here (e.g., upload or process them)
+      console.log('Files received:', files);
+      // Redirect to upload page for file handling
+      navigate('/upload');
+    };
 
   return (
     <div className="min-h-screen bg-white text-gray-900">

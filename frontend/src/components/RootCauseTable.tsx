@@ -1,9 +1,11 @@
 import React from "react";
-import { RootCause } from "../utils/rootCauseEngine";
+
+import { RootCauseEntry } from "../utils/types";
 
 interface Props {
-  causes: RootCause[];
+  causes: RootCauseEntry[];
 }
+
 
 const RootCauseTable: React.FC<Props> = ({ causes }) => {
   console.log("Rendering Root Cause Table:", causes); // Debugging log
