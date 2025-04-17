@@ -1,9 +1,10 @@
 // src/pages/Dashboard.tsx
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, AlertTriangle, Bell, Search, BarChart, Upload, ArrowRight, Heart, PersonStanding,Sun,Moon } from 'lucide-react';
+import { Brain, AlertTriangle, Bell, Search, BarChart, Upload, ArrowRight, Heart, PersonStanding, Sun, Moon, Paperclip } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-// import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
+import { exportPDF } from "../components/ReportGenerator";
+import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
 // import Health from './Health';
 import { useTheme } from '../context/ThemeContext';
 
@@ -16,7 +17,7 @@ export default function DashboardPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [showSuccess] = useState(false);
   const navigate = useNavigate();
-   const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
   const dashboardButtons = [
     { icon: Brain, label: 'AI Forecast Predictions', color: 'from-blue-400 to-indigo-600', route: '/forecast' },
@@ -27,6 +28,12 @@ export default function DashboardPage() {
     { icon: Heart, label: 'System Health', color: 'from-red-400 to-orange-600', route: '/Health' },
     { icon: Upload, label: 'Upload New Data', color: 'from-pink-400 to-red-600', route: '/upload' },
     { icon: PersonStanding, label: 'About', color: 'from-purple-500 to-pink-400', route: '/about' },
+    {
+      icon: Paperclip,
+      label: 'Generate PDF',
+      color: 'from-blue-500 to-indigo-600',
+      onClick: () => import('../utils/pdfGenerator').then(mod => mod.generateFullDashboardPDF()),
+    },
   ];
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -46,17 +53,12 @@ export default function DashboardPage() {
     handleFiles(files);
   }, []);
 
-  // const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = e.target.files ? Array.from(e.target.files) : [];
-  //   handleFiles(files);
-  // }, []);
-
   const handleFiles = (files: File[]) => {
-      // Handle the files here (e.g., upload or process them)
-      console.log('Files received:', files);
-      // Redirect to upload page for file handling
-      navigate('/upload');
-    };
+    // Handle the files here (e.g., upload or process them)
+    console.log('Files received:', files);
+    // Redirect to upload page for file handling
+    navigate('/upload');
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
@@ -87,7 +89,7 @@ export default function DashboardPage() {
               Redirecting to upload page...
             </motion.div>
           )}
-          
+
           {!isUploaded ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -122,7 +124,6 @@ export default function DashboardPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {dashboardButtons.map((button, index) => {
-                // Define color classes based on button type
                 const getColorClasses = (type: string) => {
                   switch (type) {
                     case 'AI Forecast Predictions':
@@ -150,7 +151,7 @@ export default function DashboardPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    onClick={() => navigate(button.route)}
+                    onClick={button.onClick ? button.onClick : () => navigate(button.route)}
                     className={`
                       group relative overflow-hidden
                       p-6 rounded-xl cursor-pointer
@@ -162,7 +163,7 @@ export default function DashboardPage() {
                     `}
                   >
                     <div className="relative flex flex-col items-center">
-                      <div className="w-16 h-16 mb-4 text-gray-700 dark:text-white  transform group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-16 h-16 mb-4 text-gray-700 dark:text-white transform group-hover:scale-110 transition-transform duration-300">
                         <button.icon className="w-full h-full" />
                       </div>
                       <h2 className="text-xl font-semibold text-center text-gray-900 dark:text-white">
@@ -192,13 +193,13 @@ export default function DashboardPage() {
               <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Contact</a>
             </div>
             <p className="mt-6 text-gray-500 text-sm">
-              © 2024 ProvansIQ. All rights reserved.
+              © 2025 ProvansIQ. All rights reserved.
             </p>
           </div>
         </footer>
       </div>
-            {/* Floating Theme Toggle */}
-            <button
+      {/* Floating Theme Toggle */}
+      <button
         onClick={toggleTheme}
         className="fixed bottom-6 left-6 p-3 rounded-full bg-gray-800 dark:bg-white text-white dark:text-gray-800 shadow-lg hover:scale-110 transition-transform"
       >
