@@ -10,41 +10,56 @@ export default function StartupPage() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
-  // const pricingPlans = [
-  //   {
-  //     name: 'Starter',
-  //     price: 49,
-  //     features: [
-  //       'Basic AI Predictions',
-  //       '5 Machine Connections',
-  //       'Email Support',
-  //       'Basic Analytics'
-  //     ]
-  //   },
-  //   {
-  //     name: 'Professional',
-  //     price: 149,
-  //     features: [
-  //       'Advanced AI Models',
-  //       '25 Machine Connections',
-  //       '24/7 Priority Support',
-  //       'Advanced Analytics',
-  //       'Custom Dashboards'
-  //     ]
-  //   },
-  //   {
-  //     name: 'Enterprise',
-  //     price: 499,
-  //     features: [
-  //       'Custom AI Solutions',
-  //       'Unlimited Connections',
-  //       'Dedicated Support Team',
-  //       'Full API Access',
-  //       'White Labeling',
-  //       'Custom Integration'
-  //     ]
-  //   }
-  // ];
+  const pricingPlans = [
+    {
+      name: 'Starter',
+      price: 0,
+      features: [
+        'Upload up to 1K rows/month',
+        'Basic AI Forecasting',
+        'Anomaly Detection',
+        'PDF Report Export',
+        'Email Support'
+      ]
+    },
+    {
+      name: 'Pro',
+      price: 49,
+      features: [
+        'All Starter Features',
+        'Root Cause Engine',
+        'Suggested Actions',
+        'Slack/Teams Alerts',
+        'Basic API Access',
+        'Up to 10K rows/month'
+      ]
+    },
+    {
+      name: 'Growth',
+      price: 99,
+      features: [
+        'All Pro Features',
+        'Firestore Sync & Auto Dashboard',
+        'Custom Report Branding',
+        'Advanced API Access',
+        'Multi-user Team Support',
+        'Up to 50K rows/month'
+      ]
+    },
+    {
+      name: 'Enterprise',
+      price: 499,
+      features: [
+        'Custom AI Model Deployment',
+        'Unlimited Machine Connections',
+        'Dedicated Account Manager',
+        'Full API + Webhook Integration',
+        'On-Prem Deployment (Optional)',
+        'White Labeling & SLA Support'
+      ]
+    }
+  ];
+  
 
   // const testimonials = [
   //   {
@@ -71,7 +86,7 @@ export default function StartupPage() {
   // ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
       <Navbar />
       <main>
         {/* Hero Section */}
@@ -121,7 +136,7 @@ export default function StartupPage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-background">
+        <section className="py-20 bg-background dark:bg-gray-900">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Our Features</h2>
             <div className="grid md:grid-cols-3 gap-8">
@@ -175,7 +190,7 @@ export default function StartupPage() {
         </section>
 
         {/* Pricing Section */}
-        {/* <section className="py-20 bg-background">
+         <section className="py-20 bg-background dark:bg-gray-900  ">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Pricing Plans</h2>
             <div className="grid md:grid-cols-3 gap-8">
@@ -198,7 +213,7 @@ export default function StartupPage() {
                     ))}
                   </ul>
                   <button 
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate('/introduction')}
                     className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
                   >
                     Start Free Trial
@@ -207,7 +222,7 @@ export default function StartupPage() {
               ))}
             </div>
           </div>
-        </section> */}
+        </section>
 
         {/* Testimonials Section
         <section className="py-20 bg-gray-50 dark:bg-gray-900">
@@ -242,7 +257,7 @@ export default function StartupPage() {
         </section> */}
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 bg-background">
+        <section id="contact" className="py-20 bg-background dark:bg-gray-900 ">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Get in Touch</h2>
             <div className="max-w-3xl mx-auto">
@@ -288,42 +303,42 @@ export default function StartupPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-12">
+      <footer className="bg-white text-gray-300 py-12 dark:bg-gray-800 dark:text-white ">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-xl font-bold mb-4 gradient-text">ProvansIQ</h3>
-              <p className="text-gray-400">Transforming maintenance with AI-powered predictions and real-time monitoring.</p>
+              <p className="text-black dark:text-zinc-50 ">Transforming maintenance with AI-powered predictions and real-time monitoring.</p>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
+              <h4 className="text-lg font-semibold mb-4  text-black dark:text-white">Quick Links</h4>
+              <ul className="space-y-2 text-black dark:text-white">
                 <li><a href="#features" className="hover:text-indigo-400 transition-colors">Features</a></li>
-                {/* <li><a href="#pricing" className="hover:text-indigo-400 transition-colors">Pricing</a></li> */}
+                <li><a href="#pricing" className="hover:text-indigo-400 transition-colors">Pricing</a></li>
                 {/* <li><a href="#testimonials" className="hover:text-indigo-400 transition-colors">Testimonials</a></li> */}
                 <li><a href="#contact" className="hover:text-indigo-400 transition-colors">Contact</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
+              <h4 className="text-lg font-semibold mb-4  text-black dark:text-white">Contact Info</h4>
               <ul className="space-y-2">
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2  text-black dark:text-white">
                   <MapPin className="w-4 h-4" />
                   Dallas, TX
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2  text-black dark:text-white">
                   <Phone className="w-4 h-4" />
                   +1 (425) 504-9728
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2  text-black dark:text-white">
                   <Mail className="w-4 h-4" />
                   myakalarajkumar1998@gmail.com
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Follow Me</h4>
-              <div className="flex space-x-4">
+              <h4 className="text-lg font-semibold mb-4  text-black dark:text-white">Follow Me</h4>
+              <div className="flex space-x-4  text-black dark:text-white">
                 <a href="https://medium.com/@myakalarajkumar1998" className="hover:text-indigo-400 transition-colors">
                   <FaMedium className="w-6 h-6" />
                 </a>
@@ -336,11 +351,11 @@ export default function StartupPage() {
               </div>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center dark:border-white">
             <p>&copy; {new Date().getFullYear()} ProvansIQ. All rights reserved.</p>
           </div>
           <div className="flex justify-center mt-4">
-            <a href="https://www.linkedin.com/in/raj-kumar-myakala-927860264/" className="text-gray-500 hover:text-indigo-400 transition-colors text-sm">
+            <a href="https://www.linkedin.com/in/raj-kumar-myakala-927860264/" className="text-gray-500 hover:text-indigo-400 transition-colors text-sm dark:text-white">
               Developed by Raj Kumar Myakala | AI/ML developer  
             </a>
           </div>

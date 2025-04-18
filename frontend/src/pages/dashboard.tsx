@@ -3,9 +3,6 @@ import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Brain, AlertTriangle, Bell, Search, BarChart, Upload, ArrowRight, Heart, PersonStanding, Sun, Moon, Paperclip } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { exportPDF } from "../components/ReportGenerator";
-import ForecastPDFGenerator from "../components/ForecastPDFGenerator";
-// import Health from './Health';
 import { useTheme } from '../context/ThemeContext';
 
 export default function DashboardPage() {
