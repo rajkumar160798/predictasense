@@ -1,6 +1,6 @@
 // src/components/ForecastPDFGenerator.tsx
 import React from "react";
-import { generateForecastPDF } from "../utils/pdfGenerator";
+import  generateForecastPDF from "../utils/pdfGenerator";
 
 const ForecastPDFGenerator: React.FC = () => {
   return (
