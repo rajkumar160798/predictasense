@@ -5,10 +5,13 @@ import { Zap, BarChart3, Brain, Sun, Moon, Github, Linkedin, Mail, MapPin, Phone
 import CountUp from 'react-countup';
 import { useTheme } from '../context/ThemeContext';
 import { FaMedium } from 'react-icons/fa';
+import VideoModal from './VideoModal'; 
+import { useState as reactUseState } from 'react';
 
 export default function StartupPage() {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const [showVideo, setShowVideo] = useState(false);
 
   const pricingPlans = [
     {
@@ -128,11 +131,15 @@ export default function StartupPage() {
               >
                 GET STARTED <ArrowRight className="w-4 h-4" />
               </button>
-              {/* <button className="px-8 py-3 bg-white/10 backdrop-blur-lg text-white rounded-lg hover:bg-white/20 transition-all transform hover:scale-105">
-                Schedule Demo
-              </button> */}
+              <button
+                onClick={() => setShowVideo(true)}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 rounded-lg hover:from-yellow-400 hover:to-yellow-500 transition-all flex items-center gap-2 font-semibold shadow-lg hover:shadow-yellow-500/50"
+              >
+                Watch Demo
+              </button>
             </motion.div>
           </div>
+          <VideoModal show={showVideo} onClose={() => setShowVideo(false)} />
         </section>
 
         {/* Features Section */}
@@ -224,37 +231,23 @@ export default function StartupPage() {
           </div>
         </section>
 
-        {/* Testimonials Section
-        <section className="py-20 bg-gray-50 dark:bg-gray-900">
-          <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-16 gradient-text">What Our Clients Say</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="glass-card p-6 text-center card-hover"
-                >
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
-                  />
-                  <div className="flex justify-center mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-400 italic mb-4">"{testimonial.quote}"</p>
-                  <h4 className="font-semibold">{testimonial.name}</h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
-                </motion.div>
-              ))}
-            </div>
+        {/* Learn More Section */}
+        <section className="py-20 bg-background dark:bg-gray-900">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl font-bold mb-8 gradient-text">Learn More About ProvansIQ</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+              Discover how ProvansIQ can transform your maintenance strategy with AI-powered insights.
+            </p>
+            <a
+              href="https://drive.google.com/file/d/1UtQrhvjtenz9cAnDC8qddQzlrxYS3BFS/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-8 py-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all font-semibold shadow-lg"
+            >
+              ProvansIQ Overview
+            </a>
           </div>
-        </section> */}
+        </section>
 
         {/* Contact Section */}
         <section id="contact" className="py-20 bg-background dark:bg-gray-900 ">
@@ -371,4 +364,7 @@ export default function StartupPage() {
       </button>
     </div>
   );
+}
+function useState<T>(initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+  return reactUseState(initialValue);
 }
