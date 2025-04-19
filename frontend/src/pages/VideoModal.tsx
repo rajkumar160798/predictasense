@@ -23,7 +23,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ show, onClose }) => {
         <div className="p-6">
           <iframe
             width="100%"
-            height="315"
+            height="400"
             src="https://www.youtube.com/embed/AHGvVK3s6fY" 
             title="Demo Video"
             frameBorder="0"
