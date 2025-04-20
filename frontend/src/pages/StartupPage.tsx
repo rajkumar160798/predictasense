@@ -13,55 +13,55 @@ export default function StartupPage() {
   const { theme, toggleTheme } = useTheme();
   const [showVideo, setShowVideo] = useState(false);
 
-  const pricingPlans = [
-    {
-      name: 'Starter',
-      price: 0,
-      features: [
-        'Upload up to 1K rows/month',
-        'Basic AI Forecasting',
-        'Anomaly Detection',
-        'PDF Report Export',
-        'Email Support'
-      ]
-    },
-    {
-      name: 'Pro',
-      price: 49,
-      features: [
-        'All Starter Features',
-        'Root Cause Engine',
-        'Suggested Actions',
-        'Slack/Teams Alerts',
-        'Basic API Access',
-        'Up to 10K rows/month'
-      ]
-    },
-    {
-      name: 'Growth',
-      price: 99,
-      features: [
-        'All Pro Features',
-        'Firestore Sync & Auto Dashboard',
-        'Custom Report Branding',
-        'Advanced API Access',
-        'Multi-user Team Support',
-        'Up to 50K rows/month'
-      ]
-    },
-    {
-      name: 'Enterprise',
-      price: 499,
-      features: [
-        'Custom AI Model Deployment',
-        'Unlimited Machine Connections',
-        'Dedicated Account Manager',
-        'Full API + Webhook Integration',
-        'On-Prem Deployment (Optional)',
-        'White Labeling & SLA Support'
-      ]
-    }
-  ];
+  // const pricingPlans = [
+  //   {
+  //     name: 'Starter',
+  //     price: 0,
+  //     features: [
+  //       'Upload up to 1K rows/month',
+  //       'Basic AI Forecasting',
+  //       'Anomaly Detection',
+  //       'PDF Report Export',
+  //       'Email Support'
+  //     ]
+  //   },
+  //   {
+  //     name: 'Pro',
+  //     price: 49,
+  //     features: [
+  //       'All Starter Features',
+  //       'Root Cause Engine',
+  //       'Suggested Actions',
+  //       'Slack/Teams Alerts',
+  //       'Basic API Access',
+  //       'Up to 10K rows/month'
+  //     ]
+  //   },
+  //   {
+  //     name: 'Growth',
+  //     price: 99,
+  //     features: [
+  //       'All Pro Features',
+  //       'Firestore Sync & Auto Dashboard',
+  //       'Custom Report Branding',
+  //       'Advanced API Access',
+  //       'Multi-user Team Support',
+  //       'Up to 50K rows/month'
+  //     ]
+  //   },
+  //   {
+  //     name: 'Enterprise',
+  //     price: 499,
+  //     features: [
+  //       'Custom AI Model Deployment',
+  //       'Unlimited Machine Connections',
+  //       'Dedicated Account Manager',
+  //       'Full API + Webhook Integration',
+  //       'On-Prem Deployment (Optional)',
+  //       'White Labeling & SLA Support'
+  //     ]
+  //   }
+  // ];
   
 
   // const testimonials = [
@@ -196,7 +196,7 @@ export default function StartupPage() {
           </div>
         </section>
 
-        {/* Pricing Section */}
+        {/* Pricing Section
          <section className="py-20 bg-background dark:bg-gray-900  ">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Pricing Plans</h2>
@@ -229,7 +229,7 @@ export default function StartupPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Learn More Section */}
         <section className="py-20 bg-background dark:bg-gray-900">
