@@ -1,7 +1,7 @@
 // src/pages/Dashboard.tsx
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, AlertTriangle, Bell, Search, BarChart, Upload, ArrowRight, Heart, PersonStanding, Sun, Moon, Paperclip } from 'lucide-react';
+import { Brain, AlertTriangle, Bell, Search, BarChart, Upload, ArrowRight, Heart, PersonStanding, Sun, Moon,FileDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 
@@ -26,7 +26,7 @@ export default function DashboardPage() {
     { icon: Upload, label: 'Upload New Data', color: 'from-pink-400 to-red-600', route: '/upload' },
     { icon: PersonStanding, label: 'About', color: 'from-purple-500 to-pink-400', route: '/about' },
     {
-      icon: Paperclip,
+      icon: FileDown,
       label: 'Generate PDF',
       color: 'from-blue-500 to-indigo-600',
       onClick: () => import('../utils/pdfGenerator').then(mod => mod.generateFullDashboardPDF()),
@@ -178,10 +178,10 @@ export default function DashboardPage() {
         <footer className="mt-16 border-t border-gray-100 pt-8 pb-4">
           <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
             <div className="flex items-center gap-2 mb-4">
-              <Upload className="w-6 h-6 text-blue-500" />
-              <span className="text-gray-900 dark:text-white font-semibold">ProvansIQ</span>
+              {/* <Upload className="w-6 h-6 text-blue-500" /> */}
+              <span className="text-gray-900 dark:text-white font-semibold hover:text-blue-500 dark:hover:text-blue-400    ">ProvansIQ</span>
             </div>
-            <p className="text-gray-600 text-sm text-center">
+            <p className="text-gray-600  dark:text-white font-semibold hover:text-blue-500 dark:hover:text-blue-400 text-sm text-center">
               Empowering Industry 4.0 with Advanced Predictive Maintenance
             </p>
             <div className="mt-4 flex items-center gap-6">

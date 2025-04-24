@@ -232,10 +232,9 @@ const Upload: React.FC = () => {
         <footer className="mt-16 border-t border-gray-100 pt-8 pb-4">
           <div className="max-w-7xl mx-auto px-4 flex flex-col items-center">
             <div className="flex items-center gap-2 mb-4">
-              <UploadIcon className="w-6 h-6 text-blue-500" />
-              <span className="text-gray-900 font-semibold dark:text-white ">ProvansIQ</span>
+              <span className="text-gray-900 font-semibold dark:text-white  ">ProvansIQ</span>
             </div>
-            <p className="text-gray-600 text-sm text-center">
+            <p className="text-gray-600 text-sm text-center dark:text-white ">
               Empowering Industry 4.0 with Advanced Predictive Maintenance
             </p>
             <div className="mt-4 flex items-center gap-6">
@@ -244,7 +243,7 @@ const Upload: React.FC = () => {
               <a href="#" className="text-gray-600 hover:text-blue-500 transition-colors text-sm">Contact</a>
             </div>
             <p className="mt-6 text-gray-500 text-sm">
-              © 2024 ProvansIQ. All rights reserved.
+              © 2025 ProvansIQ. All rights reserved.
             </p>
           </div>
         </footer>

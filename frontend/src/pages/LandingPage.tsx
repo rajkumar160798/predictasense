@@ -168,7 +168,7 @@ export default function LandingPage() {
                 { value: 99.5, suffix: '%', label: 'Forecast Accuracy' },
                 { value: 24, suffix: '/7', label: 'Monitoring' },
                 { value: 40, suffix: '%', label: 'Downtime Reduction' },
-                { value: 100, suffix: '+', label: 'Active Clients' }
+                { value: 95, suffix: '%', label: 'Anomaly Detection' },
               ].map((metric, index) => (
                 <motion.div
                   key={index}
